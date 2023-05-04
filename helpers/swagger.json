@@ -12,14 +12,301 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/api",
+      "url": "http://localhost:3500/api",
       "description": "API de Teste"
     }
   ],
   "paths": {
+    "/usuarios": {
+      "get": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Recupera todos os usuários cadastrados do sistema",
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "aplicattion/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "nome": {
+                        "type": "string"
+                      },
+                      "senha": {
+                        "type": "string"
+                      },
+                      "criado": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "alterado": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "is_active": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usuarios/cadastro": {
+      "post": {
+        "description": "Cadastra usuario",
+        "summary": "Recupera todos os usuários cadastrados do sistema",
+        "tags": [
+          "Usuários"
+        ],
+        "requestBody": {
+          "description": "Dados do usuário a ser cadastrado",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "description": "Nome do usuário",
+                    "example": "João"
+                  },
+                  "senha": {
+                    "type": "string",
+                    "description": "Senha do usuário",
+                    "example": "123456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuario cadastrado com sucesso",
+            "content": {
+              "aplicattion/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "erro": {
+                      "type": "boolean",
+                      "description": "Booleano indicando se a requisição foi bem sucedida ou não",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Mensagem explicando o resultado da requisição",
+                      "example": "Usuário cadastrado com sucesso"
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "Token de autenticação gerado para o usuário logado",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "falha ao cadastrar usuario",
+            "content": {
+              "aplicattion/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "erro": {
+                      "type": "boolean",
+                      "description": "Booleano indicando se a requisição foi bem sucedida ou não",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Mensagem explicando o resultado da requisição",
+                      "example": "falha ao cadastrar usuario"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },    
+    "/usuarios/entrar": {
+      "post": {
+        "description": "Realiza o login",
+        "summary": "Recupera os dados do usuário cadastrado no sistema",
+        "tags": [
+          "Usuários"
+        ],
+        "requestBody": {
+          "description": "Dados de login do usuário",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "usuario": {
+                    "type": "string",
+                    "description": "Nome do usuário",
+                    "example": "joao123"
+                  },
+                  "senha": {
+                    "type": "string",
+                    "description": "Senha do usuário",
+                    "example": "minhaSenha123"
+                  }
+                },
+                "required": ["usuario", "senha"]
+              }
+            }
+          }
+        },    
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "aplicattion/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "erro": {
+                      "type": "boolean",
+                      "description": "Booleano indicando se a requisição foi bem sucedida ou não",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Mensagem explicando o resultado da requisição",
+                      "example": "Usuário cadastrado com sucesso"
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "Token de autenticação gerado para o usuário logado",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Usuário ou a senha incorreta!",
+            "content": {
+              "aplicattion/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "erro": {
+                      "type": "boolean",
+                      "description": "Booleano indicando se a requisição foi bem sucedida ou não",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Mensagem explicando o resultado da requisição",
+                      "example": "Usuário cadastrado com sucesso"
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "Token de autenticação gerado para o usuário logado",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "falha ao cadastrar usuario",
+            "content": {
+              "aplicattion/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "erro": {
+                      "type": "boolean",
+                      "description": "Booleano indicando se a requisição foi bem sucedida ou não",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Mensagem explicando o resultado da requisição",
+                      "example": "falha ao cadastrar usuario"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usuarios/logout": {
+      "post": {
+        "description": "Logout do usuario",
+        "summary": "Realiza o logout do usuário no sistema",
+        "tags": [
+          "Usuários"
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "description": "token do usuario",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "description": "Token de autenticação gerado para o usuário logado",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"   
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuario cadastrado com sucesso",
+            "content": {
+              "aplicattion/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "auth": {
+                      "type": "boolean",
+                      "description": "Booleano indicando se a requisição foi bem sucedida ou não",
+                      "example": false
+                    },
+                    "token": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Mensagem explicando o resultado da requisição",
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/pecas": {
       "get": {
-        "tags": ["pecas"],
+        "tags": [
+          "pecas"
+        ],
         "summary": "Recupera todas as peça solicitada",
         "parameters": [
           {
@@ -63,7 +350,9 @@
     },
     "/pecas/{id}": {
       "get": {
-        "tags": ["pecas"],
+        "tags": [
+          "pecas"
+        ],
         "summary": "Recupera uma peça especifica pelo id",
         "parameters": [
           {
@@ -106,7 +395,9 @@
         }
       },
       "post": {
-        "tags": ["pecas"],
+        "tags": [
+          "pecas"
+        ],
         "summary": "Adiociona peça ao banco de dados",
         "parameters": [
           {
@@ -120,7 +411,9 @@
         ]
       },
       "put": {
-        "tags": ["pecas"],
+        "tags": [
+          "pecas"
+        ],
         "summary": "Altera quantidade de peça",
         "parameters": [
           {
@@ -134,7 +427,9 @@
         ]
       },
       "delete": {
-        "tags": ["pecas"],
+        "tags": [
+          "pecas"
+        ],
         "summary": "Delete uma peça pelo id",
         "parameters": [
           {
@@ -168,7 +463,9 @@
     },
     "/equipamentos": {
       "get": {
-        "tags": ["equipamentos"],
+        "tags": [
+          "equipamentos"
+        ],
         "summary": "Recupera todos os equipamentos solicitado",
         "parameters": [
           {
@@ -212,7 +509,9 @@
     },
     "/equipamentos/{id}": {
       "get": {
-        "tags": ["equipamentos"],
+        "tags": [
+          "equipamentos"
+        ],
         "summary": "Recupera uma peça especifica pelo id",
         "parameters": [
           {
