@@ -6,6 +6,16 @@
     "version": "0.0.1",
     "termsOfService": "https://administracao.sorocaba.sp.gov.br/ti/"
   },
+  "components": {
+    "securitySchemes": {
+      "TokenHeader": {
+        "type": "apiKey",
+        "name": "x-access-token",
+        "in": "header",
+        "description": "Token de autenticação gerado para o usuário logado"
+      }
+    }
+  },
   "externalDocs": {
     "description": "Repositório do projeto",
     "url": "http://pms-labarq02:3000/sstec/projetogx"
@@ -80,7 +90,7 @@
                   "nome": {
                     "type": "string",
                     "description": "Nome do usuário",
-                    "example": "João"
+                    "example": "t_jopedro"
                   },
                   "senha": {
                     "type": "string",
@@ -109,11 +119,6 @@
                       "type": "string",
                       "description": "Mensagem explicando o resultado da requisição",
                       "example": "Usuário cadastrado com sucesso"
-                    },
-                    "token": {
-                      "type": "string",
-                      "description": "Token de autenticação gerado para o usuário logado",
-                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
                     }
                   }
                 }
@@ -162,12 +167,12 @@
                   "usuario": {
                     "type": "string",
                     "description": "Nome do usuário",
-                    "example": "joao123"
+                    "example": "t_jopedro"
                   },
                   "senha": {
                     "type": "string",
                     "description": "Senha do usuário",
-                    "example": "minhaSenha123"
+                    "example": "123456"
                   }
                 },
                 "required": ["usuario", "senha"]
@@ -192,11 +197,6 @@
                       "type": "string",
                       "description": "Mensagem explicando o resultado da requisição",
                       "example": "Usuário cadastrado com sucesso"
-                    },
-                    "token": {
-                      "type": "string",
-                      "description": "Token de autenticação gerado para o usuário logado",
-                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
                     }
                   }
                 }
@@ -213,17 +213,12 @@
                     "erro": {
                       "type": "boolean",
                       "description": "Booleano indicando se a requisição foi bem sucedida ou não",
-                      "example": false
+                      "example": true
                     },
                     "message": {
                       "type": "string",
                       "description": "Mensagem explicando o resultado da requisição",
-                      "example": "Usuário cadastrado com sucesso"
-                    },
-                    "token": {
-                      "type": "string",
-                      "description": "Token de autenticação gerado para o usuário logado",
-                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
+                      "example": "Usuário ou a senha incorreta!"
                     }
                   }
                 }
@@ -252,7 +247,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "TokenHeader": []
+          }
+        ]
       }
     },
     "/usuarios/logout": {
@@ -262,15 +262,207 @@
         "tags": [
           "Usuários"
         ],
+        "responses": {
+          "200": {
+            "description": "Usuario cadastrado com sucesso",
+            "content": {
+              "aplicattion/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "auth": {
+                      "type": "boolean",
+                      "description": "Booleano indicando se a requisição foi bem sucedida ou não",
+                      "example": false
+                    },
+                    "token": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Mensagem explicando o resultado da requisição",
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "TokenHeader": []
+          }
+        ]
+      }
+    },
+    "/categorias": {
+      "get": {
+        "tags": [
+          "Categorias"
+        ],
+        "summary": "Recupera todas as categorias solicitada",
+        
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "nome": {
+                        "type": "string"
+                      },
+                      "sku": {
+                        "type": "string"
+                      },
+                      "is_active": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "TokenHeader": []
+          }
+        ]
+      },
+      "post": {
+        "description": "Realiza o cadastro de categoria",
+        "summary": "Recupera os dados do usuário cadastrado no sistema",
+        "tags": [
+          "Categorias"
+        ],
+        "requestBody": {
+          "description": "Dados de cadastro de categoria",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "description": "Nome da categoria",
+                    "example": "Placa-mae"
+                  },
+                  "atrib1Cat": {
+                    "type": "string",
+                    "description": "Campo da categoria",
+                    "example": "Socket"
+                  },
+                  "atrib2Cat": {
+                    "type": "string",
+                    "description": "Campo da categoria",
+                    "example": "Quantidade de slots de memoria RAM"
+                  },
+                  "atrib3Cat": {
+                    "type": "string",
+                    "description": "Campo da categoria",
+                    "example": "Portas USB, HDMI, VGA, áudio, rede, entre outras"
+                  },
+                  "atrib4Cat": {
+                    "type": "string",
+                    "description": "Campo da categoria",
+                    "example": "Tamanho físico (formato) da placa-mãe, como ATX, Micro-ATX, Mini-ITX, etc."
+                  },
+                  "atrib5Cat": {
+                    "type": "string",
+                    "description": "Campo da categoria",
+                    "example": "Capacidades de armazenamento, como número de conectores SATA e M.2"
+                  },
+                  "atrib6Cat": {
+                    "type": "string",
+                    "description": "Campo da categoria",
+                    "example": "Recursos adicionais, como suporte a overclocking, iluminação LED, entre outros."
+                  }
+                },
+                "required": ["nome", "atrib1Cat", "atrib2Cat", "atrib3Cat"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "aplicattion/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Mensagem explicando o resultado da requisição",
+                      "example": "Placa-mae cadastrado com sucesso"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro por já existir no banco de dados",
+            "content": {
+              "aplicattion/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Mensagem explicando o resultado da requisição",
+                      "example": "Placa-mãe já esta cadastrado"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "falha ao cadastrar categoria",
+            "content": {
+              "aplicattion/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Mensagem explicando o resultado da requisição",
+                      "example": "falha ao cadastrar categoria"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "TokenHeader": []
+          }
+        ]
+      }
+    },
+    "/categorias/{id}": {
+      "delete": {
+        "description": "Logout do usuario",
+        "summary": "Realiza o logout do usuário no sistema",
+        "tags": [
+          "Categorias"
+        ],
         "parameters": [
           {
-            "name": "token",
-            "description": "token do usuario",
-            "in": "header",
+            "name": "id",
+            "in": "path",
             "schema": {
-              "type": "string",
-              "description": "Token de autenticação gerado para o usuário logado",
-              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"   
+              "type": "integer"
             },
             "required": true
           }
@@ -299,9 +491,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "TokenHeader": []
+          }
+        ]
       }
     },
+
     "/pecas": {
       "get": {
         "tags": [
