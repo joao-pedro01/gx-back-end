@@ -10,34 +10,34 @@ generator client {
 model Categoria {
   id       Int     @id @default(autoincrement())
   nome     String  @unique
-  tipo     String?
-  isActive Boolean @default(true)
-  marcaCat String?
-  atrib1Cat String?
-  atrib2Cat String?
-  atrib3Cat String?
-  atrib4Cat String?
-  modeloCat String?
-  atrib5Cat String?
-  atrib6Cat String?
+  tipo     String
+  is_active Boolean @default(true)
+  marca_cat String  @default("Marca")
+  atrib1_cat String
+  atrib2_cat String
+  atrib3_cat String
+  atrib4_cat String?
+  modelo_cat String?
+  atrib5_cat String?
+  atrib6_cat String?
   specs    Especificacao[]
 }
 
 model Especificacao {
   id          Int      @id @default(autoincrement())
   saldo       Int?
-  isActive    Boolean  @default(true)
+  is_active    Boolean  @default(true)
   marca       String
   modelo      String
   atrib1      String
   atrib2      String
   atrib3      String
-  atrib4      String
-  atrib5      String
-  atrib6      String
-  sku         String?
-  categoria   Categoria @relation(fields: [fkCategoriasId], references: [id])
-  fkCategoriasId Int
+  atrib4      String?
+  atrib5      String?
+  atrib6      String?
+  sku         String
+  categoria   Categoria @relation(fields: [fk_categorias_id], references: [id])
+  fk_categorias_id Int
 }
 
 model Movimento {
@@ -59,7 +59,7 @@ model Usuario {
   senha    String
   criado   DateTime
   alterado DateTime?
-  isActive Boolean  @default(true)
+  is_active Boolean  @default(true)
   movimentos Movimento[]
 }
 
@@ -75,7 +75,7 @@ model Peca {
   atrib5    String?
   atrib6    String?
   sku       String?
-  isActive  Boolean  @default(true)
+  is_active  Boolean  @default(true)
   movimentos Movimento[]
 }
 

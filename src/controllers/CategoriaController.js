@@ -29,31 +29,15 @@ class CategoriasController {
             tipo: req.query.tipo,
         };
         removeUndefined(query);
-        var status = query.is_active;
-        status = status === 'true' ? '*' : status === 'false' ? false : true;
         
-        if(query) {
-            query.is_active = status;
-            var select = listarCategorias(query);
-
-            select.then((categorias) => {
-                removeNull(categorias);
-                res.status(200).json(categorias);
-            }).catch(err => {
-                console.log(err);
-                res.status(500).send({message: `falha ao listar categorias`});
-            })
-        }else {
-            var select = listarCategorias();
-
-            select.then((categorias) => {
-                removeNull(categorias)
-                res.status(200).json(categorias);
-            }).catch(err => {
-                console.log(err);
-                res.status(500).send({message: `falha ao listar categorias com query`});
-            })
-        }
+        let select = listarCategorias(query);
+        select.then((categorias) => {
+            removeNull(categorias);
+            res.status(200).json(categorias);
+        }).catch(err => {
+            console.error(err);
+            res.status(500).send({message: `falha ao listar categorias`});
+        });
     }
 
     /**
