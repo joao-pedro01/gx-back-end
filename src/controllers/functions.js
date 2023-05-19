@@ -49,7 +49,7 @@ export function verifyJWT(req, res, next){
     });
 }
 
-function sendError(res, code, message) {
+export function sendError(res, code, message) {
     res.status(code).send({ message: message });
 }
 

@@ -9,7 +9,7 @@ generator client {
 
 model Categoria {
   id       Int     @id @default(autoincrement())
-  nome     String  @unique
+  nome     String 
   tipo     String
   is_active Boolean @default(true)
   marca_cat String  @default("Marca")
