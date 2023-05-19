@@ -2,21 +2,32 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function listarCategorias(params) {
-    let whereClause = {
-        is_active: params && params.is_active,
-        nome: {
-            contains: params && { equals: params.nome }
-        },
-        tipo: {
-            contains: params && { equals: params.tipo }
-        }
-    };
-
+    let whereClause = "";
     const id = parseInt(params.id); // Converter para inteiro
 
     // Verificar se o valor de id é válido (não é NaN)
     if (!isNaN(id)) {
         whereClause = { id:  id };
+    }else {
+        whereClause = {
+            is_active: params && params.is_active,
+            nome: {
+                contains: params && params.nome
+            },
+            tipo: {
+                contains: params && params.tipo
+            }
+        };
+
+        // Verifica se params.nome existe antes de usar o operador contains
+        if (params && params.nome) {
+            whereClause.nome.contains = `%${params.nome}%`;
+        }
+        
+        // Verifica se params.tipo existe antes de usar o operador contains
+        if (params && params.tipo) {
+            whereClause.tipo.contains = `%${params.tipo}%`;
+        }
     }
 
     const categorias = await prisma.categoria.findMany({

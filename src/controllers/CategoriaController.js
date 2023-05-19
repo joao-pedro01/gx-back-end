@@ -24,16 +24,15 @@ class CategoriasController {
     * caso contrário irá executar select, mas sem query, as respostas são as mesmas, o que muda é o filtro do status.
     */
     static listarCategorias = (req, res) => {
-        var query = {
+        let query = {
             id: req.query.id,
             is_active: req.query.status,
             nome: req.query.nome,
             tipo: req.query.tipo,
         };
-        query.is_active = query.is_active === 'true' || query.is_active == undefined ? true : false;
-        //dd(query.is_active)
+        query.is_active = query.is_active === 'false' ? false : query.is_active == 'all' ? undefined : true;
         removeUndefined(query);
-        //dd(query);
+
         let select = listarCategorias(query);
         select.then((categorias) => {
             removeNull(categorias);
