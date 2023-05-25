@@ -49,10 +49,6 @@ export function verifyJWT(req, res, next){
     });
 }
 
-export function sendError(res, code, message) {
-    res.status(code).send({ message: message });
-}
-
 /* https://www.webtutorial.com.br/funcao-para-gerar-uma-string-aleatoria-random-com-caracteres-especificos-em-javascript */
 export function stringRamdom(tamanho) {
     var stringAleatoria = '';

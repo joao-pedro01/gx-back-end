@@ -5,9 +5,8 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "instalar": "npm install & npx prisma migrate deploy",
-    "predev": "npm install & npx prisma migrate dev",
-    "dev": "nodemon server.js & npx prisma studio",
+    "predev": "npm install",
+    "dev": "nodemon server.js",
     "start": "node server.js"
   },
   "repository": {
@@ -34,11 +33,6 @@
     "swagger-ui-express": "^4.5.0"
   },
   "devDependencies": {
-    "@prisma/client": "^4.14.0",
-    "prisma": "^4.14.0",
     "var_dump": "^1.0.5"
-  },
-  "prisma": {
-    "schema": "db/prisma/schema.prisma"
   }
 }
