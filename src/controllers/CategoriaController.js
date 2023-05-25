@@ -1,6 +1,7 @@
 import {
-    alterarQuantidade,
+    //alterarQuantidade,
     cadastrarCategoria,
+    countCategoria,
     desativarCategoria,
     listarCategorias
 } from '../models/Categoria.js';
@@ -23,37 +24,23 @@ class CategoriasController {
     * caso contrário irá executar select, mas sem query, as respostas são as mesmas, o que muda é o filtro do status.
     */
     static listarCategorias = (req, res) => {
-        var query = {
+        let query = {
+            id: req.query.id,
             is_active: req.query.status,
             nome: req.query.nome,
             tipo: req.query.tipo,
         };
+        query.is_active = query.is_active === 'false' ? false : query.is_active == 'all' ? undefined : true;
         removeUndefined(query);
-        var status = query.is_active;
-        status = status === 'true' ? '*' : status === 'false' ? false : true;
-        
-        if(query) {
-            query.is_active = status;
-            var select = listarCategorias(query);
 
-            select.then((categorias) => {
-                removeNull(categorias);
-                res.status(200).json(categorias);
-            }).catch(err => {
-                console.log(err);
-                res.status(500).send({message: `falha ao listar categorias`});
-            })
-        }else {
-            var select = listarCategorias();
-
-            select.then((categorias) => {
-                removeNull(categorias)
-                res.status(200).json(categorias);
-            }).catch(err => {
-                console.log(err);
-                res.status(500).send({message: `falha ao listar categorias com query`});
-            })
-        }
+        let select = listarCategorias(query);
+        select.then((categorias) => {
+            removeNull(categorias);
+            res.status(200).json(categorias);
+        }).catch(err => {
+            console.error(err);
+            res.status(500).send({message: `falha ao listar categorias`});
+        });
     }
 
     /**
@@ -72,6 +59,28 @@ class CategoriasController {
     * caso contrário irá executar o insert e retornar 200, caso der erro irá retornar 500
     */
     static cadastrarCategoria = (req, res) => {
+        const dados = req.body;
+        countCategoria(dados).then((isCadastrado) => {
+            //dd(isCadastrado)
+            if(isCadastrado !== 0) {
+                res.status(422).send({message: `${dados.nome} já esta cadastrado`});
+            }else {
+                cadastrarCategoria(dados).then(() => {
+                    res.status(200).send({message: `${dados.nome} cadastrado com sucesso`, dados})
+                }).catch((err => {
+                    console.error(err);
+                    res.status(500).send({message: `falha ao cadastrar categoria`});
+                }));
+            }
+        }).catch((err => {            
+            console.error(err);
+            res.status(500).send({message: `falha ao cadastrar categoria`});
+        }));
+    }
+
+
+
+    /*static cadastrarCategoria = (req, res) => {
         var dados = req.body;
         
         cadastrarCategoria(dados).then(() => {
@@ -84,7 +93,7 @@ class CategoriasController {
                 res.status(500).send({message: `falha ao cadastrar categoria`});
             }
         }));
-    }
+    }*/
 
     /**
     * Altera a quantidade da categoria.
@@ -155,8 +164,8 @@ class CategoriasController {
     * caso passar por todas etapas irá criar variavel de update enviando o valor caso ok retorna 200 caso contrário 500
     */
      static desativarCategoria = (req, res) => {
-        var id = req.params.id;
-        var select = listarCategorias({ id: id });
+        var id = parseInt(req.params.id);
+        var select = listarCategorias({ id: id, is_active: true });
 
         select.then((categoria) => {
             // se a categoria nao existir vai entrar no if
