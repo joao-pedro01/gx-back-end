@@ -9,4 +9,5 @@ router
     .get("/api/usuarios", UsuarioController.listarUsuarios)
     .post("/api/cadastro", UsuarioController.cadastrarUsuario)
     .post("/api/entrar", UsuarioController.loginUsuario)
+    .post("/api/validar-token", UsuarioController.validarToken)
 export default router;
