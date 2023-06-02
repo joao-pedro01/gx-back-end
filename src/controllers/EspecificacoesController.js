@@ -1,9 +1,5 @@
 
 import {
-    alterarQuantidade,
-    cadastrarEspecificacao,
-    desativarEspecificacao,
-    especificacao,
     listarEspecificacoes
 } from '../models/Especificacoes.js';
 import SkuController from './SkuController.js';
@@ -21,32 +17,25 @@ class EspecificacoesController {
     * 
     */
     static listarEspecificacoes = (req, res) => {
-        var query = req.query;
-        removeUndefined(req.query);
-        var status = query.is_active;
-        status = status === 'true' ? '*' : status === 'false' ? false : true;
-        
-        if(query) {
-            query.is_active = status;
-            var select = listarEspecificacoes(query);
+        var query = {
+            id: req.query.id,
+            saldo: req.query.tipo,
+            is_active: req.query.status,
+            marca: req.query.marca,
+            modelo: req.query.modelo,
+        };
+        query.is_active = query.is_active === 'false' ? false : query.is_active == 'all' ? undefined : true;
+        removeUndefined(query);
 
-            select.then((categorias) => {
-                removeNull(categorias);
-                res.status(200).json(categorias);
-            }).catch(err => {
-                console.log(err);
-                res.status(500).send({message: `falha ao listar categorias`});
-            })
-        }else {
-            var select = listarCategorias();
+        var select = listarEspecificacoes(query);
 
-            select.then((categorias) => {
-                res.status(200).json(categorias);
-            }).catch(err => {
-                console.log(err);
-                res.status(500).send({message: `falha ao listar categorias com query`});
-            })
-        }
+        select.then((categorias) => {
+            removeNull(categorias);
+            res.status(200).json(categorias);
+        }).catch(err => {
+            console.log(err);
+            res.status(500).send({message: `falha ao listar categorias`});
+        });
     }
 
     /**
@@ -58,7 +47,7 @@ class EspecificacoesController {
     * @return (404) - Peca não existe
     * @return (500) - erro interno servidor
     */
-     static especificacao = (req, res) => {
+    static especificacao = (req, res) => {
         var id = req.params.id;
         var select = especificacao(id);
 

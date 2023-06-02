@@ -6,15 +6,18 @@ export function dd(params) {
     process.exit();
 }
 
-export function removeNull(Object) {    
-    Object.map(obj => {
-        for(const column in obj) {
-            if(obj[column] == null) {
-                delete obj[column];
-            }
-        }
-    });
+export function removeNull(obj) {
+if (!obj) return;
+
+Object.keys(obj).forEach((key) => {
+    if (obj[key] === null) {
+        delete obj[key];
+    } else if(typeof obj[key] === 'object') {
+        removeNull(obj[key]); // Chamada recursiva para objetos filhos
+    }
+});
 }
+  
 
 export function removeUndefined(obj) {
     Object.keys(obj).forEach(key => {
