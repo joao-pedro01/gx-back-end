@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@prisma/client": "^4.14.0",
-    "prisma": "^4.14.0",
+    "prisma": "^4.16.0",
     "var_dump": "^1.0.5"
   },
   "prisma": {

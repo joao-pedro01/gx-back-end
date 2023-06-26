@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 export function dd(params) {
     var_dump(params);
-    process.exit();
+    process.exit(1);
 }
 
 export function removeNull(obj) {

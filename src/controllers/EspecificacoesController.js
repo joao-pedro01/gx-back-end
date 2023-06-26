@@ -1,4 +1,4 @@
-
+import Especificacao from '../classes/Especificacao.js';
 import {
     listarEspecificacoes
 } from '../models/Especificacoes.js';
@@ -17,17 +17,16 @@ class EspecificacoesController {
     * 
     */
     static listarEspecificacoes = (req, res) => {
-        var query = {
-            id: req.query.id,
-            saldo: req.query.tipo,
-            is_active: req.query.status,
-            marca: req.query.marca,
-            modelo: req.query.modelo,
-        };
-        query.is_active = query.is_active === 'false' ? false : query.is_active == 'all' ? undefined : true;
-        removeUndefined(query);
-
-        var select = listarEspecificacoes(query);
+        var objEspecificacao = new Especificacao();
+        objEspecificacao.setId(req.query.id);
+        //objEspecificacao.setTipo(req.query.tipo);
+        objEspecificacao.setStatus(req.query.status);
+        objEspecificacao.setMarca(req.query.marca);
+        objEspecificacao.setModelo(req.query.modelo);
+        
+        //query.is_active = query.is_active === 'false' ? false : query.is_active == 'all' ? undefined : true;
+        //removeUndefined(query);
+        var select = listarEspecificacoes(objEspecificacao);
 
         select.then((categorias) => {
             removeNull(categorias);

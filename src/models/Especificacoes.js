@@ -1,34 +1,52 @@
 //import conn from "../config/dbConnect.js";
+import Especificacao from "../classes/Especificacao.js";
+import Categoria from "../classes/Categoria.js";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import { dd } from "../controllers/functions.js";
 
 
-export async function listarEspecificacoes(params) {
+export async function listarEspecificacoes(especificacao) {
+    var objEspecificacoes = [];
     let whereClause = {};
-    const id = parseInt(params.id); // Converter para inteiro
+    const id = especificacao.getId();
 
     // Verificar se o valor de id é válido (não é NaN)
     if (!isNaN(id)) {
         whereClause = { id:  id };
     }else {
-        for (const key in params) {
-            if(key === "is_active") {
-                whereClause[key] = params && params[key];
-            } else if(key === "saldo"){
-                params.saldo = parseInt(params.saldo);
-                whereClause[key] = params && params[key];
-            }else {
-                whereClause[key] = {contains: params && params[key]};
-                // Verifica se params.nome existe antes de usar o operador contains
-                if (params && params[key]) {
-                    whereClause[key].contains = `%${params[key]}%`;
+        if(especificacao.getMarca()){
+            dd(especificacao.getMarca());
+            whereClause.nome = {contains: especificacao.getMarca()};
+        }
+        if(especificacao.getModelo()){
+            whereClause.nome = {contains: especificacao.getModelo()};
+        }
+        if(especificacao.getStatus()){
+            whereClause.nome = {contains: especificacao.getStatus()};
+        }
+        if(especificacao.getSaldo()){
+            whereClause.nome = {contains: especificacao.getSaldo()};
+        }
+        /*
+            for (const key in params) {
+                if(key === "is_active") {
+                    whereClause[key] = params && params[key];
+                } else if(key === "saldo"){
+                    params.saldo = parseInt(params.saldo);
+                    whereClause[key] = params && params[key];
+                }else {
+                    whereClause[key] = {contains: params && params[key]};
+                    // Verifica se params.nome existe antes de usar o operador contains
+                    if (params && params[key]) {
+                        whereClause[key].contains = `%${params[key]}%`;
+                    }
                 }
             }
-        }
+        */
     }
 
-    const especificacao = await prisma.especificacao.findMany({
+    const especificacoes =  await prisma.especificacao.findMany({
         select: {
             id: true,
             saldo: true,
@@ -49,8 +67,34 @@ export async function listarEspecificacoes(params) {
         where: whereClause
     });
 
+    especificacoes.forEach(especificacao => {
+        let objCat = new Categoria(especificacao.categoria.id, especificacao.categoria.tipo);
+        objCat.setId(especificacao.categoria.id);
+        objCat.setIsActive(especificacao.categoria.is_active);
+        let obj = new Especificacao(objCat, especificacao.is_active); // Criar um novo objeto em cada iteração
+        //dd(obj.getCategoria()) 
+        obj.setCategoria(objCat);
+        dd(obj.getCategoria())
+        //dd(obj.getCategoria())
+        obj.setId(especificacao.id);
+        obj.setAtrib1(especificacao.atrib1);
+        obj.setAtrib2(especificacao.atrib2);
+        obj.setAtrib3(especificacao.atrib3);
+        obj.setAtrib4(especificacao.atrib4);
+        obj.setAtrib5(especificacao.atrib5);
+        obj.setAtrib6(especificacao.atrib6);
+        // objCat = new Categoria(null, especificacao.categoria.tipo);
+        // obj.setCategoria(objCat);
+        // dd(obj.getCategoria())
+        objEspecificacoes.push(obj);
+        
+    });
+    //Especificacao.setId(especificacao[0].id);
+    //dd(objEspecificacoes[1].getId())
+
+
     await prisma.$disconnect();
-    return especificacao;
+    return objEspecificacoes;
 }
 
 // function que faz a consulta de todos pecas
