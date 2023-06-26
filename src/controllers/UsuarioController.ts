@@ -1,4 +1,4 @@
-import { buscaUsuario, cadastrarUsuario, listarUsuarios, loginUsuario } from '../models/Usuarios.js';
+import { buscaUsuario, cadastrarUsuario, listarUsuarios, loginUsuario } from '../models/Usuarios';
 import md5 from "md5";
 import jwt from "jsonwebtoken";
 import jwtr from 'jwt-redis';

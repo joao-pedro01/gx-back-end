@@ -1,5 +1,5 @@
 import express from "express";
-import EspecificacoesController from "../controllers/EspecificacoesController.js";
+import EspecificacoesController from "../controllers/EspecificacoesController";
 
 const router = express.Router();
 

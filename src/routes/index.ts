@@ -1,12 +1,13 @@
 import express from "express";
-import swaggerUi from "swagger-ui-express";
-import swaggerDocs from "../../helpers/swagger.json" assert { type: "json" };
-import usuarios from "./UsuariosRoutes.js";
-import categoria from "./CategoriaRoutes.js";
-import especificacao from "./EspecificacoesRoutes.js";
-import { dd, verifyJWT } from "../controllers/functions.js";
+import { Application } from "express";
+//import swaggerUi from "swagger-ui-express";
+//import swaggerDocs from "../../helpers/swagger.json" assert { type: "json" };
+import usuarios from "./UsuariosRoutes";
+import categoria from "./CategoriaRoutes";
+import especificacao from "./EspecificacoesRoutes";
+import { dd, verifyJWT } from "../controllers/functions";
 
-const routes = (app) => {
+const routes = (app: Application) => {
     // rotas principais
     app.route('/').get((req, res) => {
         res.status(200).json({titulo: "Teste"});
@@ -14,7 +15,7 @@ const routes = (app) => {
     app.route('/api/test').get((req,res) => {
         res.status(200).json({test: 1});
     });
-    app.use('/api/documentacao', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+    //app.use('/api/documentacao', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
     // rotas de arquivos externos
     app.use((req, res, next) => {
         res.append('Access-Control-Allow-Origin', '*');
@@ -30,5 +31,4 @@ const routes = (app) => {
         especificacao
     );
 };
-var cep = "https://viacep.com.br/ws/"+cep+"/json/"
 export default routes;

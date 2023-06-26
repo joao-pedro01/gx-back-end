@@ -1,5 +1,5 @@
-import conn from "../config/dbConnect.js";
-import { dd } from "../controllers/functions.js";
+import conn from "../config/dbConnect";
+import { dd } from "../controllers/functions";
 
 export const listarUsuarios = async() => {
   return await conn.select('*').table('usuarios').where({'is_active': true});

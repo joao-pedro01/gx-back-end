@@ -4,8 +4,8 @@ import {
     countCategoria,
     desativarCategoria,
     listarCategorias
-} from '../models/Categoria.js';
-import { dd, removeNull, removeUndefined } from './functions.js';
+} from '../models/Categoria';
+import { dd, removeNull, removeUndefined } from './functions';
 
 // class responsavel por todas acoes das pecas
 class CategoriasController {
