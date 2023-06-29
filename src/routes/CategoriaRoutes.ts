@@ -7,7 +7,6 @@ const router = express.Router();
 router
     .get("/api/categorias/", CategoriaController.listarCategorias)
     .post("/api/categorias", CategoriaController.cadastrarCategoria)
-    .put("/api/sistema/categorias/:id", CategoriaController.alterarQuantidadeCategoria)
     .delete("/api/categorias/:id", CategoriaController.desativarCategoria)
 
 export default router;

@@ -5,7 +5,7 @@ import { Application } from "express";
 import usuarios from "./UsuariosRoutes";
 import categoria from "./CategoriaRoutes";
 import especificacao from "./EspecificacoesRoutes";
-import { dd, verifyJWT } from "../controllers/functions";
+import { /*dd,*/ verifyJWT } from "../controllers/functions";
 
 const routes = (app: Application) => {
     // rotas principais
@@ -25,10 +25,10 @@ const routes = (app: Application) => {
     });
     app.use(
         express.json(),
-        usuarios,
+        //usuarios,
         //verifyJWT,
         categoria,
-        especificacao
+        //especificacao
     );
 };
 export default routes;

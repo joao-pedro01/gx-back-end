@@ -1,11 +1,12 @@
+import Categoria from '../classes/Categoria';
 import {
-    //alterarQuantidade,
+    alterarQuantidade,
     cadastrarCategoria,
     countCategoria,
     desativarCategoria,
     listarCategorias
 } from '../models/Categoria';
-import { dd, removeNull, removeUndefined } from './functions';
+import { /*dd,*/ removeNull, removeUndefined } from './functions';
 
 // class responsavel por todas acoes das pecas
 class CategoriasController {
@@ -23,21 +24,20 @@ class CategoriasController {
     * caso o status seja true || false, vai fazer select com where, se for bem sucedido irá retornar status 200, caso contrário erro status 500
     * caso contrário irá executar select, mas sem query, as respostas são as mesmas, o que muda é o filtro do status.
     */
-    static listarCategorias = (req, res) => {
-        let query = {
-            id: req.query.id,
-            is_active: req.query.status,
-            nome: req.query.nome,
-            tipo: req.query.tipo,
-        };
-        query.is_active = query.is_active === 'false' ? false : query.is_active == 'all' ? undefined : true;
-        removeUndefined(query);
+    static listarCategorias = (req: any, res: any) => {
+        var objCat = new Categoria(1);
+        objCat.setId(req.query.id);
+        objCat.setNome(req.query.nome);
+        objCat.setTipo(req.query.tipo);
+        objCat.setStatus(req.query.status);
+        //removeUndefined();
 
-        let select = listarCategorias(query);
-        select.then((categorias) => {
+        let select = listarCategorias(objCat);
+        select.then((categorias: Categoria[]) => {
             removeNull(categorias);
+            // implementar função para buscar especificacoes
             res.status(200).json(categorias);
-        }).catch(err => {
+        }).catch((err: any) => {
             console.error(err);
             res.status(500).send({message: `falha ao listar categorias`});
         });
@@ -58,95 +58,35 @@ class CategoriasController {
     * caso contrário irá criar var para o select e executar, se o numero do categoria já se encontrar na base de dados irá retornar 422
     * caso contrário irá executar o insert e retornar 200, caso der erro irá retornar 500
     */
-    static cadastrarCategoria = (req, res) => {
-        const dados = req.body;
-        countCategoria(dados).then((isCadastrado) => {
-            //dd(isCadastrado)
-            if(isCadastrado !== 0) {
-                res.status(422).send({message: `${dados.nome} já esta cadastrado`});
+    static cadastrarCategoria = (req: any, res: any) => {
+        var objCat = new Categoria(1);
+        objCat.setNome(req.body.nome);
+        objCat.setTipo(req.body.tipo);
+        let atributos = [
+            req.body.atrib1_cat,
+            req.body.atrib2_cat,
+            req.body.atrib3_cat,
+            req.body.atrib4_cat,
+            req.body.atrib5_cat,
+            req.body.atrib6_cat
+        ];
+        objCat.setAtributos(atributos);
+        
+        countCategoria(objCat).then((isCadastrado: number) => {
+            if(isCadastrado > 0) {
+                res.status(422).send({message: `${objCat.getNome()} já esta cadastrado`});
             }else {
-                cadastrarCategoria(dados).then(() => {
-                    res.status(200).send({message: `${dados.nome} cadastrado com sucesso`, dados})
-                }).catch((err => {
+                cadastrarCategoria(objCat).then(() => {
+                    res.status(200).send({message: `${objCat.getNome()} cadastrado com sucesso`, objCat})
+                }).catch(((err: any) => {
                     console.error(err);
                     res.status(500).send({message: `falha ao cadastrar categoria`});
                 }));
             }
-        }).catch((err => {            
+        }).catch(((err: any) => {
             console.error(err);
             res.status(500).send({message: `falha ao cadastrar categoria`});
         }));
-    }
-
-
-
-    /*static cadastrarCategoria = (req, res) => {
-        var dados = req.body;
-        
-        cadastrarCategoria(dados).then(() => {
-            res.status(200).send({message: `${dados.nome} cadastrado com sucesso`, dados})
-        }).catch((err => {
-            if(err['errno'] == 1062) {
-                res.status(422).send({message: `${dados.nome} já esta cadastrado`});
-            }else {
-                console.error(err);
-                res.status(500).send({message: `falha ao cadastrar categoria`});
-            }
-        }));
-    }*/
-
-    /**
-    * Altera a quantidade da categoria.
-    *
-    * @method PUT
-    * @param id : id
-    * @param qnt : int
-    * @return (200) - json objeto equipamentos
-    * @return (400) - O dado enviado é inválido
-    * @return (404) - NOT FOUND / Valor solicitado não encotrado
-    * @return (405) - Peça encontra-se desativada e não é possivel alterar
-    * @return (500) - erro interno servidor
-    * 
-    * irá fazer o select para verificar se a peça informada via GET existe
-    * caso não existir ira retornar 404 caso contrário irá verificar se a peça está ativa caso a peça estar inativa irá retornar 405
-    * caso passar por todas etapas irá criar variavel de update enviando o valor caso ok retorna 200 caso contrário 500
-    */
-    static alterarQuantidadeCategoria = (req, res) => {
-        var id = req.params.id;
-        let select = listarCategorias({ id: id });
-        select.then((categoria) => {
-            var saldo = req.body.saldo;
-            // se a categoria nao existir vai entrar no if e retornar erro senão vai verificar se esta desativada retornando 405
-            if(categoria.length == 0) {
-                res.status(404).send({message: "Categoria não encontrada"});
-            }else if(categoria[0].is_active == false) {
-                res.status(405).send({message: "Categoria esta desativada não pode alterar"});
-            }else {
-                // se valor < 0 return S (saida), senao return E (entrada)
-                /* let valor = saldo < 0 ? "s".toUpperCase() : "e".toUpperCase(); */
-                var saldo = categoria[0].qnt + saldo;
-                let update = alterarQuantidade(id, saldo);
-                update.then(() => {
-                    res.status(200).json(`${categoria[0].nome} foi alterado no estoque para: ${saldo}`);
-                }).catch(err => {
-                    console.log(err);
-                    res.status(500).send({message: `falha ao atualizar a quantidade da Categoria`});
-                })
-                
-                /* update.then(() => {
-                    let query = {
-                        id_usuario: req.body.id_usuario,
-                        id_peca: id,
-                        tipo: valor,
-                        valor: categoria[0].saldo
-                    };
-                    cadastrarMovimento(query);
-                }).catch(err => {
-                    console.log(err);
-                    res.status(500).send({message: `falha ao atualizar a quantidade da Categoria`});
-                }) */
-            }
-        })
     }
 
     /**
@@ -163,22 +103,23 @@ class CategoriasController {
     * caso não existir ira retornar 404 caso contrário irá verificar se a atributo já se encontra desativado caso a atributo estar inativo irá retornar 405
     * caso passar por todas etapas irá criar variavel de update enviando o valor caso ok retorna 200 caso contrário 500
     */
-     static desativarCategoria = (req, res) => {
-        var id = parseInt(req.params.id);
-        var select = listarCategorias({ id: id, is_active: true });
+     static desativarCategoria = (req: any, res: any) => {
+        var objCat = new Categoria(1);
+        objCat.setId(req.params.id);
+        var select = listarCategorias(objCat);
 
-        select.then((categoria) => {
+        select.then((categoria: any) => {// é para retornar objeto
             // se a categoria nao existir vai entrar no if
             if(categoria.length == 0) {
                 res.status(404).json("Categoria não existe");
             }else if(categoria[0].is_active == false) {
                 res.status(405).json("Categoria já esta desativada");
             }else {
-                var update = desativarCategoria(id, false);
+                var update = desativarCategoria(objCat.getId(), false);
                 // caso passar por todos os if ira desativar a categoria
                 update.then(() => {
                     res.status(200).json(`${categoria[0].nome} desativado(a) com sucesso`);
-                }).catch(err => {
+                }).catch((err: any) => {
                     console.log(err);
                     res.status(500).send({message: `falha ao desativar categoria`});
                 });
