@@ -84,7 +84,7 @@ export default class Categoria{
         if(is_active == "true") {
             is_active = true;
         }
-        console.log(is_active);
+        
         this.is_active = is_active;
     }
     getStatus(): boolean {

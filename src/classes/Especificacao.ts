@@ -15,8 +15,21 @@ class Especificacao{
     private sku: string;
     private fk_categorias_id: number;
     private categoria: Categoria;
-    constructor(status) {
-        this.is_active = status;
+    constructor() {
+        this.id = null;
+        this.saldo = null;
+        this.is_active = null;
+        this.marca = null;
+        this.modelo = null;
+        this.atrib1 = null;
+        this.atrib2 = null;
+        this.atrib3 = null;
+        this.atrib4 = null;
+        this.atrib5 = null;
+        this.atrib6 = null;
+        this.sku = null;
+        this.fk_categorias_id = null;
+        this.categoria = null;
     }
     
     setId(id) {

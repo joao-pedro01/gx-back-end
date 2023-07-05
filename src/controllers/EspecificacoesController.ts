@@ -1,9 +1,9 @@
-import Especificacao from '../classes/Especificacao.js';
+import Especificacao from '../classes/Especificacao';
 import {
     listarEspecificacoes
-} from '../models/Especificacoes.js';
+} from '../models/Especificacao';
 import SkuController from './SkuController.js';
-import { dd, removeNull, removeUndefined } from './functions.js';
+import { removeNull, removeUndefined } from './functions.js';
 
 // class responsavel por todas acoes das especificacaos
 class EspecificacoesController {
