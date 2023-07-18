@@ -2,6 +2,7 @@ import Categoria from "./Categoria";
 
 class Especificacao{
     private id: number;
+    private idUsuario: number;
     private saldo: number;
     private is_active: boolean;
     private marca: string;
@@ -16,114 +17,125 @@ class Especificacao{
     private fk_categorias_id: number;
     private categoria: Categoria;
     constructor() {
-        this.id = null;
-        this.saldo = null;
-        this.is_active = null;
-        this.marca = null;
-        this.modelo = null;
-        this.atrib1 = null;
-        this.atrib2 = null;
-        this.atrib3 = null;
-        this.atrib4 = null;
-        this.atrib5 = null;
-        this.atrib6 = null;
-        this.sku = null;
-        this.fk_categorias_id = null;
-        this.categoria = null;
+        this.id = 0;
+        this.saldo = 0;
+        this.is_active = false;
+        this.marca = '';
+        this.modelo = '';
+        this.atrib1 = '';
+        this.atrib2 = '';
+        this.atrib3 = '';
+        this.atrib4 = '';
+        this.atrib5 = '';
+        this.atrib6 = '';
+        this.sku = '';
+        this.fk_categorias_id = 0;
+        this.idUsuario = 0;
+        this.categoria = new Categoria(this.idUsuario);
     }
     
-    setId(id) {
+    setId(id: any) {
         this.id = parseInt(id);
     }
     getId() {
         return this.id;
     }
 
-    setSaldo(saldo) {
+    setSaldo(saldo: any) {
         this.saldo = saldo;
     }
     getSaldo() {
         return this.saldo;
     }
 
-    setIsActive(is_active) {
+    setStatus(is_active: any) {
+        if(is_active == "false") {
+            is_active = false;
+        }
+
+        if(is_active == "all") {
+            is_active = undefined;
+        }
+
+        if(is_active == "true") {
+            is_active = true;
+        }
+        
         this.is_active = is_active;
     }
-    getIsActive() {
+    getStatus(): boolean {
         return this.is_active;
     }
 
-    setMarca(marca) {
+    setMarca(marca: string) {
         this.marca = marca;
     }
     getMarca() {
         return this.marca;
     }
 
-    setModelo(modelo) {
+    setModelo(modelo: string) {
         this.modelo = modelo;
     }
     getModelo() {
         return this.modelo;
     }
 
-    setAtrib1(atrib1) {
-        this.atrib1 = atrib1;
+    setAtributos(atrib: string[]): void {
+        this.atrib1 = atrib[0];
+        this.atrib2 = atrib[1];
+        this.atrib3 = atrib[2];
+        this.atrib4 = atrib[3];
+        this.atrib5 = atrib[4];
+        this.atrib6 = atrib[5];
     }
-    getAtrib1() {
-        return this.atrib1;
-    }
-
-    setAtrib2(atrib2) {
-        this.atrib2 = atrib2;
-    }
-    getAtrib2() {
-        return this.atrib2;
+    getAtributos(): string[] {
+        return [this.atrib1, this.atrib2, this.atrib3, this.atrib4, this.atrib5, this.atrib6];
     }
 
-    setAtrib3(atrib3) {
-        this.atrib3 = atrib3;
-    }
-    getAtrib3() {
-        return this.atrib3;
-    }
-
-    setAtrib4(atrib4) {
-        this.atrib4 = atrib4;
-    }
-    getAtrib4() {
-        return this.atrib4;
-    }
-
-    setAtrib5(atrib5) {
-        this.atrib5 = atrib5;
-    }
-    getAtrib5() {
-        return this.atrib5;
-    }
-
-    setAtrib6(atrib6) {
-        this.atrib6 = atrib6;
-    }
-    getAtrib6() {
-        return this.atrib6;
-    }
-
-    setStatus(status) {
-        this.is_active = status;
-    }
-    getStatus() {
-        return this.is_active;
-    }
-
-    setSku(sku) {
-        this._sku = sku;
+    setSku(sku: string) {
+        this.sku = sku;
     }
     getSku() {
         return this.sku;
     }
+    
+    static GerarSku = (nome: string): string => {
+        var sku;
+        let skuDados = copiarObjeto(nome);
 
-    setFkCategoriasId(fk_categorias_id) {
+        let i = 0;
+
+        for (const column in skuDados) {
+            if(column !== "fk_categorias_id" && column !== "saldo") {
+                if(skuDados[column].length <= 2) {
+                    skuDados[column] = 0 + skuDados[column];
+                }
+                
+                sku = i > 0 ? sku + skuDados[column].substr(0,3) : skuDados[column].substr(0,3);
+                i++;
+                if(i == 7){
+                    break;
+                }
+            }
+        }
+        sku = sku.toUpperCase();
+        return sku;
+
+
+        function copiarObjeto(obj: any) {
+            if (obj === null || typeof obj !== 'object') {
+                return obj;
+            }
+            var temp = obj.constructor();
+            for (var key in obj) {
+                temp[key] = copiarObjeto(obj[key]);
+            }
+            return temp;
+        }
+    }
+
+    setFkCategoriasId(fk_categorias_id: number) {
         this.fk_categorias_id = fk_categorias_id;
     }
     getFkCategoriasId() {
@@ -134,8 +146,8 @@ class Especificacao{
         console.log(this.categoria)
         return this.categoria;
     }
-    setCategoria(categoria) {
-        this.categoria = new Categoria(categoria);
+    setCategoria(categoria: Categoria) {
+        this.categoria = categoria;
     }
     
 }

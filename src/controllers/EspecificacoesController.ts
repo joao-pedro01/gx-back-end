@@ -16,7 +16,7 @@ class EspecificacoesController {
     * 
     * 
     */
-    static listarEspecificacoes = (req, res) => {
+    static listarEspecificacoes = (req: any, res: any) => {
         var objEspecificacao = new Especificacao();
         objEspecificacao.setId(req.query.id);
         //objEspecificacao.setTipo(req.query.tipo);
@@ -46,9 +46,11 @@ class EspecificacoesController {
     * @return (404) - Peca não existe
     * @return (500) - erro interno servidor
     */
-    static especificacao = (req, res) => {
+    static especificacao = (req: any, res: any) => {
         var id = req.params.id;
-        var select = especificacao(id);
+        var objEspecificacao = new Especificacao();
+        objEspecificacao.setId(id);
+        var select = listarEspecificacoes(objEspecificacao);
 
         select.then((especificacao) => {
             // entra no if caso não retornar nada do db 
@@ -86,10 +88,21 @@ class EspecificacoesController {
     * caso contrário irá criar var para o select e executar, se o numero do categoria já se encontrar na base de dados irá retornar 422
     * caso contrário irá executar o insert e retornar 200, caso der erro irá retornar 500
     */
-    static cadastrarEspecificacao = (req, res) => {
+    static cadastrarEspecificacao = (req: any, res: any) => {
         var dados = req.body;
-        
-        dados.SKU = SkuController.GerarSku(dados);
+        var objEspecificacao = new Especificacao();
+        objEspecificacao.setMarca(dados.marca);
+        objEspecificacao.setModelo(dados.modelo);
+        let atributos = [
+            req.body.atrib1,
+            req.body.atrib2,
+            req.body.atrib3,
+            req.body.atrib4,
+            req.body.atrib5,
+            req.body.atrib6
+        ];
+        objEspecificacao.setAtributos(atributos);
+        dados.SKU = objEspecificacao.GerarSku(dados);
         listarEspecificacoes().then((query) => {
             var sku = query.find(o => o.SKU === dados.SKU);
             if(sku) {
@@ -121,7 +134,7 @@ class EspecificacoesController {
         * caso não existir ira retornar 404 caso contrário irá verificar se a peça está ativa caso a peça estar inativa irá retornar 405
         * caso passar por todas etapas irá criar variavel de update enviando o valor caso ok retorna 200 caso contrário 500
     */
-    static alterarQuantidade = (req, res) => {
+    static alterarQuantidade = (req: any, res: any) => {
         var id = req.params.id;
         var select = especificacao(id);
         
@@ -163,7 +176,7 @@ class EspecificacoesController {
     * caso não existir ira retornar 404 caso contrário irá verificar se a especificacao já se encontra desativado caso a especificacao estar inativo irá retornar 405
     * caso passar por todas etapas irá criar variavel de update enviando o valor caso ok retorna 200 caso contrário 500
     */
-    static desativarEspecificacoes = (req, res) => {
+    static desativarEspecificacoes = (req: any, res: any) => {
         var id = req.params.id;
         var select = especificacao(id);
 

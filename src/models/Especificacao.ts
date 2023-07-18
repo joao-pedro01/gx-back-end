@@ -69,7 +69,7 @@ export async function listarEspecificacoes(especificacao: Especificacao) {
         objCat.setId(especificacao.categoria.id);
         objCat.setStatus(especificacao.categoria.is_active);
       
-        const obj: Especificacao = new Especificacao(objCat, especificacao.is_active);
+        const obj: Especificacao = new Especificacao();
         obj.setCategoria(objCat);
         obj.setId(especificacao.id);
         obj.setAtrib1(especificacao.atrib1);
