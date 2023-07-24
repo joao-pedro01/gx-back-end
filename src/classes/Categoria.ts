@@ -112,6 +112,13 @@ export default class Categoria{
         this.tipo = tipo;
     }
 
+
+    setEspecificacao(Especificacao: Especificacao[]) {
+        this.Especificacao = Especificacao;
+    }
+    getEspecificacao(): Especificacao[] {
+        return this.Especificacao;
+    }
 }
 /*
   id          Int      @id @default(autoincrement())

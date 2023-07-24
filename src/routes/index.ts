@@ -28,7 +28,7 @@ const routes = (app: Application) => {
         //usuarios,
         //verifyJWT,
         categoria,
-        //especificacao
+        especificacao
     );
 };
 export default routes;

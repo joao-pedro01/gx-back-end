@@ -1,9 +1,11 @@
 import Especificacao from '../classes/Especificacao';
 import {
+    alterarQuantidade,
+    cadastrarEspecificacao,
+    desativarEspecificacao,
     listarEspecificacoes
 } from '../models/Especificacao';
-import SkuController from './SkuController.js';
-import { removeNull, removeUndefined } from './functions.js';
+import { removeNull } from './functions';
 
 // class responsavel por todas acoes das especificacaos
 class EspecificacoesController {
@@ -28,9 +30,9 @@ class EspecificacoesController {
         //removeUndefined(query);
         var select = listarEspecificacoes(objEspecificacao);
 
-        select.then((categorias) => {
-            removeNull(categorias);
-            res.status(200).json(categorias);
+        select.then((especificacoes) => {
+            removeNull(especificacoes);
+            res.status(200).json(especificacoes);
         }).catch(err => {
             console.log(err);
             res.status(500).send({message: `falha ao listar categorias`});
@@ -93,6 +95,7 @@ class EspecificacoesController {
         var objEspecificacao = new Especificacao();
         objEspecificacao.setMarca(dados.marca);
         objEspecificacao.setModelo(dados.modelo);
+        objEspecificacao.setSaldo(dados.saldo);
         let atributos = [
             req.body.atrib1,
             req.body.atrib2,
@@ -102,14 +105,16 @@ class EspecificacoesController {
             req.body.atrib6
         ];
         objEspecificacao.setAtributos(atributos);
-        dados.SKU = objEspecificacao.GerarSku(dados);
-        listarEspecificacoes().then((query) => {
-            var sku = query.find(o => o.SKU === dados.SKU);
+        objEspecificacao.setSku(dados.sku);
+        dados.SKU = objEspecificacao.GerarSku();
+        listarEspecificacoes(objEspecificacao).then((query) => {
+            let sku = objEspecificacao.getSku();
+            //var sku = query.find(o => o.SKU === dados.SKU);
             if(sku) {
                 res.status(422).send({message: `${dados.marca} já existe com SKU: ${dados.SKU}`});
             }else {
-                cadastrarEspecificacao(dados).then(() => {
-                    res.status(200).send({message: `${dados.marca} cadastrado com sucesso`}, dados);
+                cadastrarEspecificacao(objEspecificacao).then(() => {
+                    res.status(200).send({message: `${objEspecificacao.getMarca()} cadastrado com sucesso`});
                 }).catch((err => {
                     console.error(err);
                     res.status(500).send({message: `falha ao cadastrar Especificacao`});
@@ -135,26 +140,27 @@ class EspecificacoesController {
         * caso passar por todas etapas irá criar variavel de update enviando o valor caso ok retorna 200 caso contrário 500
     */
     static alterarQuantidade = (req: any, res: any) => {
-        var id = req.params.id;
-        var select = especificacao(id);
+        var objEspecificacao = new Especificacao();
+        objEspecificacao.setId(req.params.id);
+        var select = listarEspecificacoes(objEspecificacao);
         
-        select.then((especificacao) => {
+        select.then((especificacao: Especificacao[]) => {
             var saldo = req.body.saldo;
             // se a especificacao nao existir vai entrar no if
             if(especificacao.length == 0) {
                 res.status(404).send({message: "Especificação não encontrada"});
-            }else if(especificacao[0].is_active == false) {
+            }else if(especificacao[0].getStatus() == false) {
                 res.status(405).send({message: "Especificação esta desativada não pode alterar"});
-            }else if(especificacao[0].saldo + saldo < 0) {
+            }else if(objEspecificacao.getSaldo() + saldo < 0) {
                 res.status(400).send({message: 'Não tem em estoque'});
             }else {
                 // se valor < 0 return S (saida), senao return E (entrada)
                 let valor = saldo < 0 ? "s".toUpperCase() : "e".toUpperCase();
-                var saldo = especificacao[0].saldo + saldo;
+                var saldo = objEspecificacao.getSaldo() + saldo;
                 /*  variavel responsavel por executar alterarQuantidade, passando o id da especificacao e a quantidade a ser alterada, podendo ser positiva(somando) e negativa(subtraindo) com o valor do banco de dados */
-                alterarQuantidade(id, saldo).then(() => {
+                alterarQuantidade(objEspecificacao).then(() => {
                     res.status(200).json(`foi alterado no estoque para: ${saldo}`);
-                }).catch(err => {
+                }).catch((err: any) => {
                     console.log(err);
                     res.status(500).send({message: `falha ao atualizar a quantidade da peça`});
                 });
@@ -177,21 +183,22 @@ class EspecificacoesController {
     * caso passar por todas etapas irá criar variavel de update enviando o valor caso ok retorna 200 caso contrário 500
     */
     static desativarEspecificacoes = (req: any, res: any) => {
-        var id = req.params.id;
-        var select = especificacao(id);
+        var objEspecificacao = new Especificacao();
+        objEspecificacao.setId(req.params.id);
+        let select = listarEspecificacoes(objEspecificacao);
 
-        select.then((especificacao) => {
+        select.then((especificacao: Especificacao[]/*: Especificacao[]*/) => {
             // se a especificacao nao existir vai entrar no if
             if(especificacao.length == 0) {
-                res.status(404).json("Especificacao não existe");
-            }else if(especificacao[0].is_active == false) {
+                res.status(404).json("Especificacao inválida!");
+            }else if(especificacao[0].getStatus() == false) {
                 res.status(405).json("Especificacao já esta desativada");
             }else {
-                var update = desativarEspecificacao(id, false);
+                let update = desativarEspecificacao(objEspecificacao.getId());
                 // caso passar por todos os if ira desativar a especificacao
                 update.then(() => {
-                    res.status(200).json(`${especificacao[0].marca} desativado(a) com sucesso`);
-                }).catch(err => {
+                    res.status(200).json(`${especificacao[0].getMarca()} desativado(a) com sucesso`);
+                }).catch((err: any) => {
                     console.log(err);
                     res.status(500).send({message: `falha ao desativar especificacao`});
                 });

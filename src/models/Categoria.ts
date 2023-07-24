@@ -3,10 +3,6 @@ const prisma = new PrismaClient();
 
 import Categoria from "../classes/Categoria";
 
-export async function alterarQuantidade() {
-    return false;
-}
-
 export async function listarCategorias(categorias: Categoria): Promise<Categoria[]> {
     let whereClause:any;
     const id: number = categorias.getId(); // Converter para inteiro
@@ -115,8 +111,3 @@ export const desativarCategoria = async(id: number, status: boolean) => {
 
   await prisma.$disconnect();
 }
-
-// não utilizado
-//export const alterarQuantidade = async(id, qnt) => {
-//  return await conn.where({id: id}).update({qnt: qnt}).table('categorias');
-//}

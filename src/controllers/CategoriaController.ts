@@ -1,6 +1,5 @@
 import Categoria from '../classes/Categoria';
 import {
-    alterarQuantidade,
     cadastrarCategoria,
     countCategoria,
     desativarCategoria,

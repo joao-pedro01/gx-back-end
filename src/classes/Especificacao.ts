@@ -100,39 +100,16 @@ class Especificacao{
         return this.sku;
     }
     
-    static GerarSku = (nome: string): string => {
-        var sku;
-        let skuDados = copiarObjeto(nome);
+    GerarSku() {
+        this.sku = this.marca.substring(0, 3) + this.modelo.substring(0, 3) + this.atrib1.substring(0, 3) + this.atrib2.substring(0, 3) + this.atrib3.substring(0, 3) + this.atrib4.substring(0, 3) + this.atrib5.substring(0, 3);
 
-        let i = 0;
-
-        for (const column in skuDados) {
-            if(column !== "fk_categorias_id" && column !== "saldo") {
-                if(skuDados[column].length <= 2) {
-                    skuDados[column] = 0 + skuDados[column];
-                }
-                
-                sku = i > 0 ? sku + skuDados[column].substr(0,3) : skuDados[column].substr(0,3);
-                i++;
-                if(i == 7){
-                    break;
-                }
+        if(this.sku.length < 21) {
+            for (let i = 0; i < (21 - this.sku.length); i++) {
+                this.sku = '0' + this.sku;
             }
         }
-        sku = sku.toUpperCase();
-        return sku;
-
-
-        function copiarObjeto(obj: any) {
-            if (obj === null || typeof obj !== 'object') {
-                return obj;
-            }
-            var temp = obj.constructor();
-            for (var key in obj) {
-                temp[key] = copiarObjeto(obj[key]);
-            }
-            return temp;
-        }
+        this.sku = this.sku.toUpperCase();
+        console.log(this.sku);
     }
 
     setFkCategoriasId(fk_categorias_id: number) {
