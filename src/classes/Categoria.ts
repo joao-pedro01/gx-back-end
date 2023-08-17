@@ -28,7 +28,7 @@ export default class Categoria{
     */
     constructor(idUsuario: number) {
         let data = new Date();
-        this.id = 0;
+        this.id = NaN;
         this.idUsuario = idUsuario;
         this.nome = '';
         this.tipo = '';

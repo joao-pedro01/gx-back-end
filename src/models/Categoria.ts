@@ -6,9 +6,8 @@ import Categoria from "../classes/Categoria";
 export async function listarCategorias(categorias: Categoria): Promise<Categoria[]> {
     let whereClause:any;
     const id: number = categorias.getId(); // Converter para inteiro
-
     // Verificar se o valor de id é válido (não é NaN)
-    if (!isNaN(id)) {
+    if(!isNaN(id)) {
         whereClause = { id:  id };
     }else {
         whereClause = {
@@ -77,7 +76,7 @@ export const countCategoria = async(categoria: Categoria) => {
             }
         }
     });
-    const result = await prisma.$queryRaw`SELECT * FROM tabela`;
+    //const result = await prisma.$queryRaw`SELECT * FROM tabela`;
     await prisma.$disconnect();
     return count;
 }
