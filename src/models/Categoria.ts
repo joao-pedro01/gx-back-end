@@ -14,10 +14,10 @@ export async function listarCategorias(categorias: Categoria): Promise<Categoria
         whereClause = {
             is_active: categorias && categorias.getStatus(),
             nome: {
-                contains: categorias && categorias.getNome()
+                contains: categorias && categorias.getNome(),
             },
             tipo: {
-                contains: categorias && categorias.getTipo()
+                contains: categorias && categorias.getTipo(),
             }
         };
 
@@ -77,7 +77,7 @@ export const countCategoria = async(categoria: Categoria) => {
             }
         }
     });
-
+    const result = await prisma.$queryRaw`SELECT * FROM tabela`;
     await prisma.$disconnect();
     return count;
 }

@@ -96,11 +96,21 @@ class Especificacao{
     setSku(sku: string) {
         this.sku = sku;
     }
-    getSku() {
+    getSku(): string {
         return this.sku;
     }
     
     GerarSku() {
+        if(this.atrib4 == null) {
+            this.atrib4 = '000';
+        }
+        if(this.atrib5 == null) {
+            this.atrib5 = '000';
+        }
+        if(this.atrib6 == null) {
+            this.atrib6 = '000';
+        }
+        
         this.sku = this.marca.substring(0, 3) + this.modelo.substring(0, 3) + this.atrib1.substring(0, 3) + this.atrib2.substring(0, 3) + this.atrib3.substring(0, 3) + this.atrib4.substring(0, 3) + this.atrib5.substring(0, 3);
 
         if(this.sku.length < 21) {

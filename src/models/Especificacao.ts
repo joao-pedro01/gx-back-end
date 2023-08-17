@@ -9,23 +9,38 @@ export async function listarEspecificacoes(especificacao: Especificacao) {
     let whereClause:any;
     const id = especificacao.getId();
     const objEspecificacoes: Especificacao[] = [];
-
+    console.log(id)
+    
     // Verificar se o valor de id é válido (não é NaN)
-    if (!isNaN(id)) {
+    if(isNaN(id) || id != 0) {
         whereClause = { id:  id };
     }else {
-        if(especificacao.getMarca()){
-            whereClause.nome = {contains: especificacao.getMarca()};
-        }
-        if(especificacao.getModelo()){
-            whereClause.nome = {contains: especificacao.getModelo()};
-        }
-        if(especificacao.getStatus()){
-            whereClause.nome = {contains: especificacao.getStatus()};
-        }
-        if(especificacao.getSaldo()){
-            whereClause.nome = {contains: especificacao.getSaldo()};
-        }
+        console.log('+test')
+        
+        //if(especificacao.getSku()){
+        //    console.log( JSON.stringify(especificacao) );
+        //    console.log('sku: ' + especificacao.getSku());
+        //    whereClause.sku = { contains: especificacao.getSku().toString() }; // Correção aqui
+        //    console.log(whereClause);
+        //    process.exit();
+        //}else {
+//
+        //    if(especificacao.getMarca()){
+        //        console.log(especificacao.getMarca())
+        //        whereClause.marca = {contains: especificacao.getMarca()};
+        //    }
+        //    if(especificacao.getModelo()){
+        //        whereClause.modelo = {contains: especificacao.getModelo()};
+        //    }
+        //    if(especificacao.getStatus()){
+        //        whereClause.is_active = {contains: especificacao.getStatus()};
+        //    }
+        //    if(especificacao.getSaldo()){
+        //        whereClause.saldo = especificacao.getSaldo();
+        //    }
+        //}
+        //
+        
         /*
             for (const key in params) {
                 if(key === "is_active") {
@@ -61,7 +76,18 @@ export async function listarEspecificacoes(especificacao: Especificacao) {
             fk_categorias_id: true,
             categoria: true
         },
-        where: whereClause
+        where: {
+            OR: [
+                { marca: { contains: especificacao.getMarca() || undefined } },
+                { modelo: { contains: especificacao.getModelo() || undefined } },
+                { saldo: especificacao.getSaldo() || undefined },
+            ],
+            AND: [
+                { is_active: especificacao.getStatus() || undefined },
+                { sku: especificacao.getSku() || undefined },
+                { id: especificacao.getId() || undefined },
+            ],
+          },
     });
 
     especificacoes.forEach((especificacao) => {

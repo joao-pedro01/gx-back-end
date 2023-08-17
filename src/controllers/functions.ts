@@ -1,11 +1,6 @@
 //import var_dump from "var_dump";
 import jwt from "jsonwebtoken";
 
-/*export function dd(params) {
-    var_dump(params);
-    process.exit(1);
-}*/
-
 export function removeNull(obj: any): void {
     if (!obj) return;
 

@@ -14,7 +14,6 @@ export default class Categoria{
     private atrib6: string;
     private is_active: boolean;
     private data: string;
-    private Especificacao: Especificacao[];
     /*
         id           Int       @id @default(autoincrement())
         idUsuario    Int
@@ -41,8 +40,7 @@ export default class Categoria{
         this.atrib5 = '';
         this.atrib6 = '';
         this.is_active = true;
-        this.data =  ((data.getDate() )) + "/" + ((data.getMonth() + 1)) + "/" + data.getFullYear();
-        this.Especificacao = [];
+        this.data =  ((data.getDate() )) + "/" + ((data.getMonth() + 1)) + "/" + data.getFullYear()
     }
 
     setId(id: any): void {
@@ -110,14 +108,6 @@ export default class Categoria{
     }
     setTipo(tipo: string) {
         this.tipo = tipo;
-    }
-
-
-    setEspecificacao(Especificacao: Especificacao[]) {
-        this.Especificacao = Especificacao;
-    }
-    getEspecificacao(): Especificacao[] {
-        return this.Especificacao;
     }
 }
 /*

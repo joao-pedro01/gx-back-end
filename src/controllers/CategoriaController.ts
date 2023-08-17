@@ -84,7 +84,7 @@ class CategoriasController {
             }
         }).catch(((err: any) => {
             console.error(err);
-            res.status(500).send({message: `falha ao cadastrar categoria`});
+            res.status(500).send({message: `falha ao listar para cadastra categoria`});
         }));
     }
 

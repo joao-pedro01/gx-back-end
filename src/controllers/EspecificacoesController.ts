@@ -93,6 +93,7 @@ class EspecificacoesController {
     static cadastrarEspecificacao = (req: any, res: any) => {
         var dados = req.body;
         var objEspecificacao = new Especificacao();
+        objEspecificacao.setFkCategoriasId(dados.fk_categorias_id);
         objEspecificacao.setMarca(dados.marca);
         objEspecificacao.setModelo(dados.modelo);
         objEspecificacao.setSaldo(dados.saldo);
@@ -105,13 +106,15 @@ class EspecificacoesController {
             req.body.atrib6
         ];
         objEspecificacao.setAtributos(atributos);
-        objEspecificacao.setSku(dados.sku);
-        dados.SKU = objEspecificacao.GerarSku();
-        listarEspecificacoes(objEspecificacao).then((query) => {
-            let sku = objEspecificacao.getSku();
+        objEspecificacao.GerarSku();
+        //console.log(objEspecificacao.getSku())
+        //objEspecificacao.setSku(dados.sku);
+        listarEspecificacoes(objEspecificacao).then((query: Especificacao[]) => {
+            //let sku = query[0].sku();
+            console.log(query)
             //var sku = query.find(o => o.SKU === dados.SKU);
-            if(sku) {
-                res.status(422).send({message: `${dados.marca} já existe com SKU: ${dados.SKU}`});
+            if(query[0] != null) {
+                res.status(422).send({message: `${dados.marca} já existe com SKU: ${objEspecificacao.getSku()}`});
             }else {
                 cadastrarEspecificacao(objEspecificacao).then(() => {
                     res.status(200).send({message: `${objEspecificacao.getMarca()} cadastrado com sucesso`});
