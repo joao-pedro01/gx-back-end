@@ -16,7 +16,9 @@ async function seed() {
             atrib4_cat: 'Gráficos Integrados',
             atrib5_cat: 'Socket',
             atrib6_cat: '',
-            is_active: true
+            is_active: true,
+            criado: new Date(),
+            alterado: new Date(),
         },
         {
             nome: 'Memória Ram',
@@ -24,6 +26,9 @@ async function seed() {
             atrib1_cat: 'Capacidade',
             atrib2_cat: 'Frequência',
             atrib3_cat: 'Tipo',
+            is_active: true,
+            criado: new Date(),
+            alterado: new Date(),
         }
     ];
     let especificacoes = [
@@ -38,7 +43,9 @@ async function seed() {
             atrib6: '',
             sku: '',
             fk_categorias_id: 1,
-            is_active: true
+            is_active: true,
+            criado: new Date(),
+            alterado: new Date(),
         },
         {
             marca: 'Intel',
@@ -51,7 +58,9 @@ async function seed() {
             atrib6: '',
             sku: '',
             fk_categorias_id: 1,
-            is_active: true
+            is_active: true,
+            criado: new Date(),
+            alterado: new Date(),
         },
         {
             marca: 'Intel',
@@ -64,7 +73,9 @@ async function seed() {
             atrib6: '',
             sku: '',
             fk_categorias_id: 1,
-            is_active: false
+            is_active: false,
+            criado: new Date(),
+            alterado: new Date(),
         },
         {
             marca: 'Kingston',
@@ -74,7 +85,9 @@ async function seed() {
             atrib3: 'DDR4',
             sku: 'KINHYP8GB266DDR000000',
             fk_categorias_id: 2,
-            is_active: true
+            is_active: true,
+            criado: new Date(),
+            alterado: new Date(),
         },
         {
             marca: 'Kingston',
@@ -84,7 +97,9 @@ async function seed() {
             atrib3: 'DDR4',
             sku: 'KINHYP16G266DDR000000',
             fk_categorias_id: 2,
-            is_active: false
+            is_active: false,
+            criado: new Date(),
+            alterado: new Date(),
         },
 
     ];

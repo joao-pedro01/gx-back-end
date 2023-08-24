@@ -92,7 +92,9 @@ export const cadastrarCategoria = async(categoria: Categoria) => {
             atrib4_cat: categoria.getAtributos()[3],
             atrib5_cat: categoria.getAtributos()[4],
             atrib6_cat: categoria.getAtributos()[5],
-            is_active: true
+            is_active: true,
+            criado: new Date(),
+            alterado: new Date()
         }
     });
     await prisma.$disconnect();

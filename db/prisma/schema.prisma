@@ -12,21 +12,25 @@ model Categoria {
   nome     String 
   tipo     String
   is_active Boolean @default(true)
+  criado DateTime
+  alterado DateTime?
   marca_cat String  @default("Marca")
   atrib1_cat String
   atrib2_cat String
   atrib3_cat String
   atrib4_cat String?
-  modelo_cat String?
   atrib5_cat String?
   atrib6_cat String?
+  modelo_cat String?
   specs    Especificacao[]
 }
 
 model Especificacao {
   id          Int      @id @default(autoincrement())
   saldo       Int?
-  is_active    Boolean  @default(true)
+  is_active   Boolean  @default(true)
+  criado      DateTime @default(now())
+  alterado    DateTime?
   marca       String
   modelo      String
   atrib1      String
