@@ -19,18 +19,17 @@ class EspecificacoesController {
     * 
     */
     static listarEspecificacoes = (req: any, res: any) => {
-        var objEspecificacao = new Especificacao();
+        let objEspecificacao = new Especificacao();
         objEspecificacao.setId(req.query.id);
-        //objEspecificacao.setTipo(req.query.tipo);
+        objEspecificacao.setSku(req.query.sku);
         objEspecificacao.setStatus(req.query.status);
         objEspecificacao.setMarca(req.query.marca);
         objEspecificacao.setModelo(req.query.modelo);
         
         //query.is_active = query.is_active === 'false' ? false : query.is_active == 'all' ? undefined : true;
         //removeUndefined(query);
-        var select = listarEspecificacoes(objEspecificacao);
 
-        select.then((especificacoes) => {
+        listarEspecificacoes(objEspecificacao).then((especificacoes) => {
             removeNull(especificacoes);
             res.status(200).json(especificacoes);
         }).catch(err => {

@@ -77,19 +77,18 @@ export async function listarEspecificacoes(especificacao: Especificacao) {
             categoria: true
         },
         where: {
-            OR: [
-                { marca: { contains: especificacao.getMarca() || undefined } },
-                { modelo: { contains: especificacao.getModelo() || undefined } },
-                { saldo: especificacao.getSaldo() || undefined },
-            ],
+            //OR: [
+            //    { marca: { contains: especificacao.getMarca() || undefined } },
+            //    { modelo: { contains: especificacao.getModelo() || undefined } },
+            //    { saldo: especificacao.getSaldo() || undefined },
+            //],
             AND: [
                 { is_active: especificacao.getStatus() || undefined },
                 { sku: especificacao.getSku() || undefined },
                 { id: especificacao.getId() || undefined },
             ],
-          },
+        },
     });
-
     especificacoes.forEach((especificacao) => {
         const objCat: Categoria = new Categoria(1);
         objCat.setId(especificacao.categoria.id);
