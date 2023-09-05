@@ -24,15 +24,14 @@ class CategoriasController {
     * caso contrário irá executar select, mas sem query, as respostas são as mesmas, o que muda é o filtro do status.
     */
     static listarCategorias = (req: any, res: any) => {
-        var objCat = new Categoria(1);
+        let objCat = new Categoria(1);
         objCat.setId(req.query.id);
         objCat.setNome(req.query.nome);
         objCat.setTipo(req.query.tipo);
         objCat.setStatus(req.query.status);
         //removeUndefined();
 
-        let select = listarCategorias(objCat);
-        select.then((categorias: Categoria[]) => {
+        listarCategorias(objCat).then((categorias: Categoria[]) => {
             removeNull(categorias);
             // implementar função para buscar especificacoes
             res.status(200).json(categorias);
@@ -58,7 +57,7 @@ class CategoriasController {
     * caso contrário irá executar o insert e retornar 200, caso der erro irá retornar 500
     */
     static cadastrarCategoria = (req: any, res: any) => {
-        var objCat = new Categoria(1);
+        let objCat = new Categoria(1);
         objCat.setNome(req.body.nome);
         objCat.setTipo(req.body.tipo);
         let atributos = [
@@ -103,20 +102,18 @@ class CategoriasController {
     * caso passar por todas etapas irá criar variavel de update enviando o valor caso ok retorna 200 caso contrário 500
     */
      static desativarCategoria = (req: any, res: any) => {
-        var objCat = new Categoria(1);
+        let objCat = new Categoria(1);
         objCat.setId(req.params.id);
-        var select = listarCategorias(objCat);
 
-        select.then((categoria: any) => {// é para retornar objeto
+        listarCategorias(objCat).then((categoria: any) => {// é para retornar objeto
             // se a categoria nao existir vai entrar no if
             if(categoria.length == 0) {
                 res.status(404).json("Categoria não existe");
             }else if(categoria[0].is_active == false) {
                 res.status(405).json("Categoria já esta desativada");
             }else {
-                var update = desativarCategoria(objCat.getId(), false);
                 // caso passar por todos os if ira desativar a categoria
-                update.then(() => {
+                desativarCategoria(objCat.getId(), false).then(() => {
                     res.status(200).json(`${categoria[0].nome} desativado(a) com sucesso`);
                 }).catch((err: any) => {
                     console.log(err);
