@@ -156,11 +156,9 @@ class EspecificacoesController {
             if(especificacao[0].getSaldo() + saldo < 0) {
                 return res.status(400).send({message: 'Não tem em estoque'});
             }
+            //saldo = especificacao[0].getSaldo() + saldo;
+            especificacao[0].setSaldo(saldo, "");
 
-            //console.log(saldo)
-            saldo = especificacao[0].getSaldo() + saldo;
-            especificacao[0].setSaldo(saldo, "sla");
-            //console.log(saldo)
             /*  variavel responsavel por executar alterarQuantidade, passando o id da especificacao e a quantidade a ser alterada, podendo ser positiva(somando) e negativa(subtraindo) com o valor do banco de dados */
             alterarQuantidade(especificacao[0]).then(() => {
                 return res.status(200).json(`foi alterado no estoque para: ${especificacao[0].getSaldo()}`);

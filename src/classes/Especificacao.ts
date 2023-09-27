@@ -50,7 +50,6 @@ class Especificacao{
             //valor = parseInt(valor.toString());
             if(this.saldo + valor >= 0) {
                 this.saldo += valor;
-                console.log('this.saldo')
             }
         }
     }
