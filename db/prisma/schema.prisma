@@ -13,7 +13,7 @@ model Categoria {
   tipo     String
   is_active Boolean @default(true)
   criado DateTime
-  alterado DateTime?
+  alterado DateTime
   marca_cat String  @default("Marca")
   atrib1_cat String
   atrib2_cat String
@@ -53,8 +53,6 @@ model Movimento {
   valor        String
   data         DateTime @default(now())
   usuario      Usuario  @relation(fields: [idUsuario], references: [id])
-  peca         Peca?    @relation(fields: [idPeca], references: [id])
-  equipamento  Equipamento? @relation(fields: [idEquipamento], references: [id])
 }
 
 model Usuario {
@@ -64,37 +62,5 @@ model Usuario {
   criado   DateTime
   alterado DateTime?
   is_active Boolean  @default(true)
-  movimentos Movimento[]
-}
-
-model Peca {
-  id        Int      @id @default(autoincrement())
-  nome      String
-  modelo    String?
-  marca     String?
-  atrib1    String?
-  atrib2    String?
-  atrib3    String?
-  atrib4    String?
-  atrib5    String?
-  atrib6    String?
-  sku       String?
-  is_active  Boolean  @default(true)
-  movimentos Movimento[]
-}
-
-model Equipamento {
-  id        Int      @id @default(autoincrement())
-  nome      String
-  modelo    String?
-  marca     String?
-  atrib1    String?
-  atrib2    String?
-  atrib3    String?
-  atrib4    String?
-  atrib5    String?
-  atrib6    String?
-  sku       String?
-  isActive  Boolean  @default(true)
   movimentos Movimento[]
 }

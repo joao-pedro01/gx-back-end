@@ -29,12 +29,33 @@ class CategoriasController {
         objCat.setNome(req.query.nome);
         objCat.setTipo(req.query.tipo);
         objCat.setStatus(req.query.status);
-        //removeUndefined();
+
 
         listarCategorias(objCat).then((categorias: Categoria[]) => {
-            removeNull(categorias);
+            //removeNull(categorias);
+            let json: any = [];
+            
+            categorias.forEach((categoria:Categoria) => {
+                json.push({
+                    id: categoria.getId(),
+                    nome: categoria.getNome(),
+                    tipo: categoria.getTipo(),
+                    valor: categoria.getValor(),
+                    atrib1: categoria.getAtributos()[0],
+                    atrib2: categoria.getAtributos()[1],
+                    atrib3: categoria.getAtributos()[2],
+                    atrib4: categoria.getAtributos()[3],
+                    atrib5: categoria.getAtributos()[4],
+                    atrib6: categoria.getAtributos()[5],
+                    is_active: categoria.getStatus(),
+                    criado: categoria.getCriado(),
+                    alterado: categoria.getAlterado()
+                  });
+            });
+
+            removeNull(json);
             // implementar função para buscar especificacoes
-            res.status(200).json(categorias);
+            res.status(200).json(json);
         }).catch((err: any) => {
             console.error(err);
             res.status(500).send({message: `falha ao listar categorias`});
@@ -60,15 +81,14 @@ class CategoriasController {
         let objCat = new Categoria(1);
         objCat.setNome(req.body.nome);
         objCat.setTipo(req.body.tipo);
-        let atributos = [
+        objCat.setAtributos([
             req.body.atrib1_cat,
             req.body.atrib2_cat,
             req.body.atrib3_cat,
             req.body.atrib4_cat,
             req.body.atrib5_cat,
             req.body.atrib6_cat
-        ];
-        objCat.setAtributos(atributos);
+        ]);
         
         countCategoria(objCat).then((isCadastrado: number) => {
             if(isCadastrado > 0) {
