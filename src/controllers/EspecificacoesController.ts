@@ -94,7 +94,7 @@ class EspecificacoesController {
         objEspecificacao.setFkCategoriasId(dados.fk_categorias_id);
         objEspecificacao.setMarca(dados.marca);
         objEspecificacao.setModelo(dados.modelo);
-        objEspecificacao.setSaldo(dados.saldo);
+        objEspecificacao.setSaldo(dados.saldo, "undefined");
         let atributos = [
             req.body.atrib1,
             req.body.atrib2,
@@ -145,26 +145,29 @@ class EspecificacoesController {
         objEspecificacao.setId(req.params.id);
 
         listarEspecificacoes(objEspecificacao).then((especificacao: Especificacao[]) => {
-            var saldo = req.body.saldo;
+            let saldo = req.body.saldo;
             // se a especificacao nao existir vai entrar no if
             if(especificacao.length == 0) {
-                res.status(404).send({message: "Especificação não encontrada"});
-            }else if(especificacao[0].getStatus() == false) {
-                res.status(405).send({message: "Especificação esta desativada não pode alterar"});
-            }else if(objEspecificacao.getSaldo() + saldo < 0) {
-                res.status(400).send({message: 'Não tem em estoque'});
-            }else {
-                // se valor < 0 return S (saida), senao return E (entrada)
-                let valor = saldo < 0 ? "s".toUpperCase() : "e".toUpperCase();
-                var saldo = objEspecificacao.getSaldo() + saldo;
-                /*  variavel responsavel por executar alterarQuantidade, passando o id da especificacao e a quantidade a ser alterada, podendo ser positiva(somando) e negativa(subtraindo) com o valor do banco de dados */
-                alterarQuantidade(objEspecificacao).then(() => {
-                    res.status(200).json(`foi alterado no estoque para: ${saldo}`);
-                }).catch((err: any) => {
-                    console.log(err);
-                    res.status(500).send({message: `falha ao atualizar a quantidade da peça`});
-                });
+                return res.status(404).send({message: "Especificação não encontrada"});
             }
+            if(especificacao[0].getStatus() == false) {
+                return res.status(405).send({message: "Especificação esta desativada não pode alterar"});
+            }
+            if(especificacao[0].getSaldo() + saldo < 0) {
+                return res.status(400).send({message: 'Não tem em estoque'});
+            }
+
+            //console.log(saldo)
+            saldo = especificacao[0].getSaldo() + saldo;
+            especificacao[0].setSaldo(saldo, "sla");
+            //console.log(saldo)
+            /*  variavel responsavel por executar alterarQuantidade, passando o id da especificacao e a quantidade a ser alterada, podendo ser positiva(somando) e negativa(subtraindo) com o valor do banco de dados */
+            alterarQuantidade(especificacao[0]).then(() => {
+                return res.status(200).json(`foi alterado no estoque para: ${especificacao[0].getSaldo()}`);
+            }).catch((err: any) => {
+                console.log(err);
+                return res.status(500).send({message: `falha ao atualizar a quantidade da peça`});
+            });
         });
     }
 

@@ -9,13 +9,11 @@ export async function listarEspecificacoes(especificacao: Especificacao) {
     let whereClause:any;
     const id = especificacao.getId();
     const objEspecificacoes: Especificacao[] = [];
-    console.log(id)
     
     // Verificar se o valor de id é válido (não é NaN)
     if(isNaN(id) || id != 0) {
         whereClause = { id:  id };
     }else {
-        console.log('+test')
         
         //if(especificacao.getSku()){
         //    console.log( JSON.stringify(especificacao) );
@@ -90,7 +88,7 @@ export async function listarEspecificacoes(especificacao: Especificacao) {
         },
     });
     especificacoes.forEach((especificacao) => {
-        const objCat: Categoria = new Categoria(1);
+        let objCat: Categoria = new Categoria(1);
         objCat.setId(especificacao.categoria.id);
         objCat.setStatus(especificacao.categoria.is_active);
         objCat.setNome(especificacao.categoria.nome);
@@ -115,14 +113,14 @@ export async function listarEspecificacoes(especificacao: Especificacao) {
             "Especificacao": []
         */
       
-        const obj: Especificacao = new Especificacao();
+        let obj: Especificacao = new Especificacao();
         let atributos: any[] = [especificacao.atrib1, especificacao.atrib2, especificacao.atrib3, especificacao.atrib4, especificacao.atrib5, especificacao.atrib6];// any pois pode ser null ou string
         obj.setCategoria(objCat);
         obj.setId(especificacao.id);
         obj.setStatus(especificacao.is_active);
         obj.setMarca(especificacao.marca);
         obj.setModelo(especificacao.modelo);
-        obj.setSaldo(especificacao.saldo);
+        obj.setSaldo(especificacao.saldo, "undefined");
         obj.setAtributos(atributos);
         obj.setSku(especificacao.sku);
         obj.setFkCategoriasId(especificacao.fk_categorias_id);

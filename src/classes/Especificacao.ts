@@ -41,10 +41,20 @@ class Especificacao{
         return this.id;
     }
 
-    setSaldo(saldo: any) {
-        this.saldo = saldo;
+    setSaldo(valor: number | null, operador: string) {
+        if(valor == null) {
+            valor = 0;
+        } else if(operador == "undefined") {
+            this.saldo = valor;
+        } else {
+            //valor = parseInt(valor.toString());
+            if(this.saldo + valor >= 0) {
+                this.saldo += valor;
+                console.log('this.saldo')
+            }
+        }
     }
-    getSaldo() {
+    getSaldo(): number {
         return this.saldo;
     }
 
