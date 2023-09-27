@@ -6,18 +6,17 @@ import Categoria from "../classes/Categoria";
 export async function listarCategorias(categorias: Categoria): Promise<Categoria[]> {
     let whereClause:any;
     const id: number = categorias.getId(); // Converter para inteiro
-
     // Verificar se o valor de id é válido (não é NaN)
-    if (!isNaN(id)) {
+    if(!isNaN(id)) {
         whereClause = { id:  id };
     }else {
         whereClause = {
             is_active: categorias && categorias.getStatus(),
             nome: {
-                contains: categorias && categorias.getNome()
+                contains: categorias && categorias.getNome(),
             },
             tipo: {
-                contains: categorias && categorias.getTipo()
+                contains: categorias && categorias.getTipo(),
             }
         };
 
@@ -45,22 +44,33 @@ export async function listarCategorias(categorias: Categoria): Promise<Categoria
             atrib4_cat: true,
             modelo_cat: true,
             atrib5_cat: true,
-            atrib6_cat: true
+            atrib6_cat: true,
+            criado: true,
+            alterado: true,
         },
         where: whereClause
     });
     
     let categoriaList: Categoria[] = [];
     categoria.forEach(element => {
-        let obj = new Categoria(1); // Criar um novo objeto em cada iteração
-        let atributos: any[] = [element.atrib1_cat, element.atrib2_cat, element.atrib3_cat, element.atrib4_cat, element.atrib5_cat, element.atrib6_cat];// any pois pode ser null ou string
+        let objCat = new Categoria(1); // Criar um novo objeto em cada iteração
+        let atributos: any[] = [
+            element.atrib1_cat,
+            element.atrib2_cat,
+            element.atrib3_cat,
+            element.atrib4_cat,
+            element.atrib5_cat,
+            element.atrib6_cat
+        ];// any pois atributo 4, 5 e 6 pode ser null ou string
 
-        obj.setId(element.id);
-        obj.setNome(element.nome);
-        obj.setTipo(element.tipo);
-        obj.setStatus(element.is_active);
-        obj.setAtributos(atributos);
-        categoriaList.push(obj); // Adicionar o objeto ao array
+        objCat.setId(element.id);
+        objCat.setNome(element.nome);
+        objCat.setTipo(element.tipo);
+        objCat.setStatus(element.is_active);
+        objCat.setAtributos(atributos);
+        objCat.setCriado(element.criado);
+        objCat.setCriado(element.alterado);
+        categoriaList.push(objCat); // Adicionar o objeto ao array
     });
 
     await prisma.$disconnect();
@@ -77,7 +87,7 @@ export const countCategoria = async(categoria: Categoria) => {
             }
         }
     });
-
+    //const result = await prisma.$queryRaw`SELECT * FROM tabela`;
     await prisma.$disconnect();
     return count;
 }
@@ -93,7 +103,9 @@ export const cadastrarCategoria = async(categoria: Categoria) => {
             atrib4_cat: categoria.getAtributos()[3],
             atrib5_cat: categoria.getAtributos()[4],
             atrib6_cat: categoria.getAtributos()[5],
-            is_active: true
+            is_active: true,
+            criado: new Date(),
+            alterado: new Date()
         }
     });
     await prisma.$disconnect();

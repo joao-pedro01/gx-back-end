@@ -19,18 +19,17 @@ class EspecificacoesController {
     * 
     */
     static listarEspecificacoes = (req: any, res: any) => {
-        var objEspecificacao = new Especificacao();
+        let objEspecificacao = new Especificacao();
         objEspecificacao.setId(req.query.id);
-        //objEspecificacao.setTipo(req.query.tipo);
+        objEspecificacao.setSku(req.query.sku);
         objEspecificacao.setStatus(req.query.status);
         objEspecificacao.setMarca(req.query.marca);
         objEspecificacao.setModelo(req.query.modelo);
         
         //query.is_active = query.is_active === 'false' ? false : query.is_active == 'all' ? undefined : true;
         //removeUndefined(query);
-        var select = listarEspecificacoes(objEspecificacao);
 
-        select.then((especificacoes) => {
+        listarEspecificacoes(objEspecificacao).then((especificacoes) => {
             removeNull(especificacoes);
             res.status(200).json(especificacoes);
         }).catch(err => {
@@ -49,12 +48,11 @@ class EspecificacoesController {
     * @return (500) - erro interno servidor
     */
     static especificacao = (req: any, res: any) => {
-        var id = req.params.id;
-        var objEspecificacao = new Especificacao();
+        let id = req.params.id;
+        let objEspecificacao = new Especificacao();
         objEspecificacao.setId(id);
-        var select = listarEspecificacoes(objEspecificacao);
 
-        select.then((especificacao) => {
+        listarEspecificacoes(objEspecificacao).then((especificacao) => {
             // entra no if caso não retornar nada do db 
             if(especificacao.length === 0) {
                 res.status(404).send({message: "Peça não encontrada"});
@@ -91,8 +89,9 @@ class EspecificacoesController {
     * caso contrário irá executar o insert e retornar 200, caso der erro irá retornar 500
     */
     static cadastrarEspecificacao = (req: any, res: any) => {
-        var dados = req.body;
-        var objEspecificacao = new Especificacao();
+        let dados = req.body;
+        let objEspecificacao = new Especificacao();
+        objEspecificacao.setFkCategoriasId(dados.fk_categorias_id);
         objEspecificacao.setMarca(dados.marca);
         objEspecificacao.setModelo(dados.modelo);
         objEspecificacao.setSaldo(dados.saldo);
@@ -105,13 +104,15 @@ class EspecificacoesController {
             req.body.atrib6
         ];
         objEspecificacao.setAtributos(atributos);
-        objEspecificacao.setSku(dados.sku);
-        dados.SKU = objEspecificacao.GerarSku();
-        listarEspecificacoes(objEspecificacao).then((query) => {
-            let sku = objEspecificacao.getSku();
+        objEspecificacao.GerarSku();
+        //console.log(objEspecificacao.getSku())
+        //objEspecificacao.setSku(dados.sku);
+        listarEspecificacoes(objEspecificacao).then((query: Especificacao[]) => {
+            //let sku = query[0].sku();
+            console.log(query)
             //var sku = query.find(o => o.SKU === dados.SKU);
-            if(sku) {
-                res.status(422).send({message: `${dados.marca} já existe com SKU: ${dados.SKU}`});
+            if(query[0] != null) {
+                res.status(422).send({message: `${dados.marca} já existe com SKU: ${objEspecificacao.getSku()}`});
             }else {
                 cadastrarEspecificacao(objEspecificacao).then(() => {
                     res.status(200).send({message: `${objEspecificacao.getMarca()} cadastrado com sucesso`});
@@ -140,11 +141,10 @@ class EspecificacoesController {
         * caso passar por todas etapas irá criar variavel de update enviando o valor caso ok retorna 200 caso contrário 500
     */
     static alterarQuantidade = (req: any, res: any) => {
-        var objEspecificacao = new Especificacao();
+        let objEspecificacao = new Especificacao();
         objEspecificacao.setId(req.params.id);
-        var select = listarEspecificacoes(objEspecificacao);
-        
-        select.then((especificacao: Especificacao[]) => {
+
+        listarEspecificacoes(objEspecificacao).then((especificacao: Especificacao[]) => {
             var saldo = req.body.saldo;
             // se a especificacao nao existir vai entrar no if
             if(especificacao.length == 0) {
@@ -183,11 +183,10 @@ class EspecificacoesController {
     * caso passar por todas etapas irá criar variavel de update enviando o valor caso ok retorna 200 caso contrário 500
     */
     static desativarEspecificacoes = (req: any, res: any) => {
-        var objEspecificacao = new Especificacao();
+        let objEspecificacao = new Especificacao();
         objEspecificacao.setId(req.params.id);
-        let select = listarEspecificacoes(objEspecificacao);
 
-        select.then((especificacao: Especificacao[]/*: Especificacao[]*/) => {
+        listarEspecificacoes(objEspecificacao).then((especificacao: Especificacao[]/*: Especificacao[]*/) => {
             // se a especificacao nao existir vai entrar no if
             if(especificacao.length == 0) {
                 res.status(404).json("Especificacao inválida!");

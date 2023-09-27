@@ -1,4 +1,5 @@
 import Especificacao from "./Especificacao";
+import momemnt from "moment";
 
 export default class Categoria{
     private id: number;
@@ -13,23 +14,12 @@ export default class Categoria{
     private atrib5: string;
     private atrib6: string;
     private is_active: boolean;
-    private data: string;
-    private Especificacao: Especificacao[];
-    /*
-        id           Int       @id @default(autoincrement())
-        idUsuario    Int
-        idPeca       Int?
-        idEquipamento Int?
-        tipo         String
-        valor        String
-        data         DateTime @default(now())
-        usuario      Usuario  @relation(fields: [idUsuario], references: [id])
-        peca         Peca?    @relation(fields: [idPeca], references: [id])
-        equipamento  Equipamento? @relation(fields: [idEquipamento], references: [id])
-    */
+    private criado: Date;
+    private alterado: Date;
+
     constructor(idUsuario: number) {
         let data = new Date();
-        this.id = 0;
+        this.id = NaN;
         this.idUsuario = idUsuario;
         this.nome = '';
         this.tipo = '';
@@ -41,8 +31,8 @@ export default class Categoria{
         this.atrib5 = '';
         this.atrib6 = '';
         this.is_active = true;
-        this.data =  ((data.getDate() )) + "/" + ((data.getMonth() + 1)) + "/" + data.getFullYear();
-        this.Especificacao = [];
+        this.criado = new Date();
+        this.alterado = new Date();
     }
 
     setId(id: any): void {
@@ -90,13 +80,6 @@ export default class Categoria{
     getStatus(): boolean {
         return this.is_active;
     }
-
-    setData(data: string) {
-        this.data = data;
-    }
-    getData() {
-        return this.data;
-    }
     
     setValor(valor: number) {
         this.valor = valor;
@@ -112,27 +95,17 @@ export default class Categoria{
         this.tipo = tipo;
     }
 
-
-    setEspecificacao(Especificacao: Especificacao[]) {
-        this.Especificacao = Especificacao;
+    setCriado(data: Date) {
+        this.criado = data;
     }
-    getEspecificacao(): Especificacao[] {
-        return this.Especificacao;
+    getCriado(): string {
+        return momemnt(this.criado).format("DD/MM/YYYY");;
+    }
+
+    setAlterado(data: Date) {
+        this.alterado = data;
+    }
+    getAlterado(): string {
+        return momemnt(this.alterado).format("DD/MM/YYYY");;
     }
 }
-/*
-  id          Int      @id @default(autoincrement())
-  saldo       Int?
-  is_active    Boolean  @default(true)
-  marca       String
-  modelo      String
-  atrib1      String
-  atrib2      String
-  atrib3      String
-  atrib4      String?
-  atrib5      String?
-  atrib6      String?
-  sku         String
-  categoria   Categoria @relation(fields: [fk_categorias_id], references: [id])
-  fk_categorias_id Int
-*/
