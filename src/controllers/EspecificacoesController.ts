@@ -55,7 +55,7 @@ class EspecificacoesController {
         listarEspecificacoes(objEspecificacao).then((especificacao) => {
             // entra no if caso não retornar nada do db 
             if(especificacao.length === 0) {
-                res.status(404).send({message: "Peça não encontrada"});
+                return res.status(404).send({message: "Peça não encontrada"});
             }
 
             res.status(200).json(especificacao);
