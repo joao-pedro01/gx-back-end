@@ -1,90 +1,71 @@
-import { buscaUsuario, cadastrarUsuario, listarUsuarios, loginUsuario } from '../models/Usuarios';
-import md5 from "md5";
+import path from 'path';
+import axios from 'axios';
 import jwt from "jsonwebtoken";
-import jwtr from 'jwt-redis';
-import bcrypt from "bcryptjs";
-import { dd } from './functions.js';
+import Usuario from '../classes/Usuario';
+import { buscaUsuario, cadastrarUsuario, listarUsuarios } from '../models/Usuarios';
+import ErrorLog from '../classes/errorLog';
 
 // class responsavel por todas acoes do usuario
 class UsuarioController {
     // function que retorna os usuarios
-    static listarUsuarios = (req, res) => {
+    static listarUsuarios = (req: any, res: any) => {
         listarUsuarios().then((usuarios) => {
             res.status(200).json(usuarios);
         });
     }
 
-    static cadastrarUsuario = (req, res) => {
-        var nome = req.body.nome;
-        var senha = req.body.senha;
-        let data = new Date();
-        let dataFormatada = data.getFullYear() + "/" + ((data.getMonth() + 1)) + "/" + ((data.getDate() ));
+    static cadastrarUsuario = (req: any, res: any) => {
+        let objUsuario: Usuario = new Usuario(req.body.usuario, req.body.senha);
+        objUsuario.loginUsuario();
 
-        // const salt = bcrypt.genSaltSync(10);
-        // const hash = bcrypt.hashSync(senha, salt);
-        const hash = md5(senha);
+        buscaUsuario(objUsuario).then((usuario) => {
+            if(usuario) {
+                return res.status(400).send({message: 'Usuario já cadastrado'});
+            }
 
-        var query = {
-            nome: nome,
-            senha: hash,
-            criado: dataFormatada
-        };
-
-        buscaUsuario({"nome": nome}).then((usuario) => {
-            //dd(usuario)
-            cadastrarUsuario(query).then((usuario) => {
+            cadastrarUsuario(objUsuario).then((usuario) => {
+                throw new Error('Erro teste');
                 res.status(200).send({message: 'Usuario cadastrado com sucesso'});
             }).catch(err => {
+                let logError = new ErrorLog(path.join(__dirname, '../../logs/errorLog.json'));
+                logError.saveLog(err, objUsuario.getId(), objUsuario.getNome());
                 console.log(err);
                 res.status(500).send({message: `falha ao cadastrar usuario`});
             });
         })
     }
 
-    static loginUsuario = (req, res) => {
-        var usuario = req.body.usuario;
-        var senha = req.body.senha;
-        var hash = md5(senha);
-        var query = {
-            nome: usuario,
-            senha: hash
-        }
+    static loginUsuario = (req: any, res: any) => {
+        let objUsuario: Usuario = new Usuario(req.body.usuario, req.body.senha);
 
-        loginUsuario(query).then((usuario) => {
-            if(usuario == undefined) {
-                res.status(400).json({ erro: true, message: "Usuário ou a senha incorreta!" });
-            }else {
-                let dados = {
-                    id: usuario.id,
-                    nome: usuario.nome,
-                }
-                var token = jwt.sign(dados, process.env.SECRET, {
-                    expiresIn: 1200 //20 min
-                    // expiresIn: 60 //1 min
-                    // expiresIn: '7d' // 7 dia
-                });
-                res.json({erro: false, message: "Login realizado com sucesso!", token});
+        axios.post(`${process.env.API_URL ?? ''}/login`, {
+            username: objUsuario.getNome(),
+            password: objUsuario.getSenha()
+        }).then(response => {
+            console.log(response.data)
+            if (response.data == true) {
+                var token = jwt.sign({
+                    id: objUsuario.getId(),
+                    nome: objUsuario.getNome(),
+                }, process.env.SECRET ?? '', {
+                expiresIn: 14400 //4h
+                // expiresIn: 60 //1 min
+                // expiresIn: '7d' // 7 dia
+            });
+
+                return res.json({erro: false, message: "Login realizado com sucesso!", token});
             }
+            
+            return res.status(400).json({ erro: true, message: "Usuário ou a senha incorreta!" });
+        }).catch(error => {
+            const logs = new ErrorLog(path.join(__dirname, '../../logs/errorLog.json'));
+            logs.saveLog(error, 0, '');
+            return res.status(500).json({ erro: true, message: "Erro ao validar usuário!" });
         });
     }
 
-    static logout = (req, res) => {
+    static logout = (req: any, res: any) => {
         res.json({ auth: false, token: null });
-    }
-
-    static validarToken = (req, res) => {
-        const token = req.headers['x-access-token'];
-
-        if (!token) return res.status(401).json({ auth: false, message: 'No token provided.' });
-
-        jwt.verify(token, process.env.SECRET, function(err, decoded) {
-        if (err) return res.status(500).json({ auth: false, message: 'Failed to authenticate token.' });
-
-        // se tudo estiver ok, salva no request para uso posterior
-        req.userId = decoded.id;
-        // Retorna true indicando autenticação bem-sucedida
-        res.json({ auth: true });
-        });
     }
 }
 

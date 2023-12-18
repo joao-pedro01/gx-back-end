@@ -5,7 +5,7 @@ import {
     desativarCategoria,
     listarCategorias
 } from '../models/Categoria';
-import { /*dd,*/ removeNull, removeUndefined } from './functions';
+import { removeNull } from './functions';
 
 // class responsavel por todas acoes das pecas
 class CategoriasController {
